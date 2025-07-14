@@ -1,0 +1,4640 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rechnung - Eventseiten.ch</title>
+  <style>
+    /* Reset und Grundeinstellungen */
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    @font-face {
+      font-family: 'Helvetica Neue';
+      src: local('Helvetica Neue'), local('HelveticaNeue');
+      font-weight: 400;
+      font-style: normal;
+    }
+    
+    @font-face {
+      font-family: 'Helvetica Neue';
+      src: local('Helvetica Neue Medium'), local('HelveticaNeue-Medium');
+      font-weight: 500;
+      font-style: normal;
+    }
+    
+    @font-face {
+      font-family: 'Helvetica Neue';
+      src: local('Helvetica Neue Bold'), local('HelveticaNeue-Bold');
+      font-weight: 700;
+      font-style: normal;
+    }
+    
+    :root {
+      /* Corporate Identity Farben - Enterprise Grade */
+      --primary: #e9251f;
+      --primary-dark: #c81e18;
+      --primary-light: rgba(233, 37, 31, 0.08);
+      --primary-ultralight: rgba(233, 37, 31, 0.04);
+      --accent: #fbf1f1;
+      --gray-950: #0f1112;
+      --gray-900: #1a1a1a;
+      --gray-800: #2d2d2d;
+      --gray-700: #4a4a4a;
+      --gray-600: #6b6b6b;
+      --gray-500: #8a8a8a;
+      --gray-400: #a8a8a8;
+      --gray-300: #c7c7c7;
+      --gray-200: #e1e1e1;
+      --gray-150: #efefef;
+      --gray-100: #f5f5f5;
+      --gray-50: #fafafa;
+      --white: #ffffff;
+      
+      /* PRODUCTION-GRADE Typography - Optimized Readability */
+      --font-size-xs: 10px;  /* Increased from 9px */
+      --font-size-sm: 12px;  /* Increased from 11px */
+      --font-size-base: 13px; /* Increased from 12px */
+      --font-size-lg: 15px;   /* Increased from 14px */
+      --font-size-xl: 17px;   /* Increased from 16px */
+      --font-size-2xl: 22px;  /* Increased from 20px */
+      --font-size-3xl: 26px;  /* Increased from 24px */
+      
+      /* EXACT A4 Format - GUARANTEED FIT */
+      --page-width: 210mm;
+      --page-height: 297mm;
+      --content-margin: 12mm;
+      
+      /* CALCULATED Spacing - NEVER OVERFLOW */
+      --header-height: 20mm;
+      --footer-height: 12mm;
+      --available-content: 265mm; /* 297 - 20 - 12 */
+      
+      --space-xs: 1.5mm;
+      --space-sm: 2.5mm;
+      --space-md: 3.5mm;
+      --space-lg: 5mm;
+      --space-xl: 7mm;
+      --space-2xl: 10mm;
+    }
+    
+    @page {
+      size: A4;
+      margin: 0;
+    }
+    
+    body {
+      font-family: 'Helvetica Neue', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      line-height: 1.4;
+      color: var(--gray-800);
+      background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      padding: 0;
+      font-weight: 400;
+      letter-spacing: -0.01em;
+      font-size: var(--font-size-base);
+      margin: 0;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    
+    .page {
+      width: var(--page-width);
+      height: var(--page-height);
+      position: relative;
+      background-color: var(--white);
+      margin: 0 auto;
+      overflow: hidden;
+      box-shadow: 
+        0 25px 50px -12px rgba(0, 0, 0, 0.12),
+        0 0 0 1px rgba(0, 0, 0, 0.05);
+      border-radius: 2mm;
+      page-break-after: always;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    /* Header - EXACT HEIGHT */
+    .invoice-header {
+      background: linear-gradient(135deg, var(--white) 0%, #fafbfc 100%);
+      height: var(--header-height);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 var(--content-margin);
+      position: relative;
+      border-top: 8px solid var(--primary);
+      border-bottom: 1px solid var(--gray-200);
+      flex-shrink: 0;
+    }
+    
+    .invoice-header::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 100%;
+      background: linear-gradient(90deg, transparent 0%, rgba(233, 37, 31, 0.02) 50%, transparent 100%);
+      pointer-events: none;
+    }
+    
+    .logo-container {
+      display: flex;
+      align-items: center;
+      z-index: 2;
+    }
+    
+    .logo-square {
+      width: 28px;
+      height: 28px;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      border-radius: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 8px;
+      box-shadow: 0 3px 8px rgba(233, 37, 31, 0.25);
+      position: relative;
+    }
+    
+    .logo-square::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 5px;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, transparent 100%);
+      pointer-events: none;
+    }
+    
+    .logo-square svg {
+      color: var(--white);
+      filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
+    }
+    
+    .logo-text {
+      font-weight: 700;
+      font-size: var(--font-size-lg);
+      color: var(--gray-900);
+      letter-spacing: -0.02em;
+    }
+    
+    .logo-text .highlight {
+      color: var(--primary);
+    }
+    
+    .document-info {
+      font-size: var(--font-size-sm);
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      font-weight: 600;
+      color: var(--gray-900);
+      background: var(--gray-100);
+      padding: var(--space-xs) var(--space-sm);
+      border-radius: 4px;
+      border: 1px solid var(--gray-200);
+      z-index: 2;
+    }
+    
+    /* Content - EXACT CALCULATED HEIGHT */
+    .content {
+      height: var(--available-content);
+      padding: var(--space-lg) var(--content-margin);
+      padding-bottom: var(--space-sm);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    
+    /* Invoice Information - COMPACT */
+    .invoice-info-section {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: var(--space-lg);
+      gap: var(--space-2xl); /* Increased gap for better separation */
+    }
+    
+    .company-details {
+      flex: 1.3; /* Slightly wider for company details */
+      max-width: 55%; /* Increased from 50% */
+    }
+    
+    .invoice-details {
+      flex: 1;
+      max-width: 42%; /* Reduced from 45% to balance */
+      text-align: right;
+    }
+    
+    .company-name {
+      font-size: var(--font-size-lg);
+      font-weight: 700;
+      color: var(--gray-900);
+      margin-bottom: var(--space-xs);
+      letter-spacing: -0.01em;
+    }
+    
+    .company-address {
+      font-size: var(--font-size-xs);
+      color: var(--gray-700);
+      line-height: 1.4;
+    }
+    
+    .company-address strong {
+      color: var(--gray-900);
+      font-weight: 600;
+    }
+    
+    .invoice-title {
+      font-size: var(--font-size-2xl);
+      font-weight: 700;
+      color: var(--gray-900);
+      margin-bottom: var(--space-xs);
+      letter-spacing: -0.02em;
+    }
+    
+    .invoice-meta {
+      font-size: var(--font-size-xs);
+      color: var(--gray-700);
+      line-height: 1.5;
+    }
+    
+    .invoice-meta strong {
+      color: var(--gray-900);
+      font-weight: 600;
+    }
+    
+    /* Customer Information - CLEAN NEUTRAL BORDER */
+    .customer-section {
+      margin-bottom: var(--space-lg);
+      padding: var(--space-md);
+      background: linear-gradient(135deg, var(--gray-50) 0%, var(--white) 100%);
+      border-radius: 5px;
+      border: 1px solid var(--gray-200); /* Clean neutral border only */
+      position: relative;
+    }
+    
+    /* Remove the red accent line */
+    .customer-section::before {
+      display: none; /* Remove red accent completely */
+    }
+    
+    .customer-title {
+      font-size: var(--font-size-xs);
+      font-weight: 700;
+      color: var(--gray-900);
+      margin-bottom: var(--space-xs);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    .customer-address {
+      font-size: var(--font-size-sm);
+      color: var(--gray-800);
+      line-height: 1.4;
+      font-weight: 500;
+    }
+    
+    .vat-number-line {
+      margin-top: var(--space-sm);
+      padding-top: var(--space-xs);
+      border-top: 1px solid var(--gray-200);
+      font-size: var(--font-size-xs);
+      color: var(--gray-700);
+      font-weight: 500;
+    }
+    
+    .vat-blank {
+      border-bottom: 1px solid var(--gray-400);
+      display: inline-block;
+      width: 100px;
+      margin-left: var(--space-xs);
+    }
+    
+    /* Items Table - COMPACT */
+    .invoice-items {
+      margin-bottom: var(--space-lg);
+      border-radius: 5px;
+      overflow: hidden;
+      box-shadow: 0 3px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      border: 1px solid var(--gray-200);
+      flex-shrink: 0;
+    }
+    
+    .items-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: var(--font-size-sm);
+      background: var(--white);
+    }
+    
+    .items-table th {
+      background: linear-gradient(135deg, var(--gray-900) 0%, var(--gray-800) 100%);
+      color: var(--white);
+      padding: var(--space-sm) var(--space-xs);
+      text-align: left;
+      font-weight: 600;
+      font-size: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      position: relative;
+    }
+    
+    .items-table th::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--primary) 0%, var(--primary-dark) 100%);
+    }
+    
+    .items-table th:last-child {
+      text-align: right;
+    }
+    
+    .items-table td {
+      padding: var(--space-sm) var(--space-xs);
+      border-bottom: 1px solid var(--gray-200);
+      color: var(--gray-800);
+      vertical-align: top;
+    }
+    
+    .items-table td:last-child {
+      text-align: right;
+      font-weight: 600;
+      color: var(--gray-900);
+    }
+    
+    .items-table tbody tr:hover {
+      background-color: var(--gray-50);
+    }
+    
+    .items-table tbody tr:last-child td {
+      border-bottom: none;
+    }
+    
+    .item-description {
+      color: var(--gray-600);
+      font-size: 8px;
+      line-height: 1.3;
+      margin-top: var(--space-xs);
+      font-style: italic;
+    }
+    
+    /* Bottom Section with Side-by-Side Cards */
+    .bottom-section {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-bottom: 0;
+    }
+    
+    /* Cards Row - Payment and Total Side by Side */
+    .cards-row {
+      display: flex;
+      gap: 30px;
+      align-items: stretch; /* Equal height for both cards */
+    }
+    
+    /* Payment Information - FLEXIBLE HEIGHT */
+    .payment-section {
+      flex: 1.4; /* Wider payment section */
+      background: linear-gradient(135deg, var(--primary-ultralight) 0%, rgba(251, 241, 241, 0.8) 100%);
+      border-radius: 5px;
+      padding: var(--space-md);
+      position: relative;
+      border: 1px solid rgba(233, 37, 31, 0.15);
+      box-shadow: 0 2px 6px rgba(233, 37, 31, 0.1);
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .payment-section::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--primary) 0%, var(--primary-dark) 100%);
+      border-radius: 5px 5px 0 0;
+    }
+    
+    .payment-title {
+      font-size: var(--font-size-sm);
+      font-weight: 700;
+      color: var(--gray-900);
+      margin-bottom: var(--space-sm);
+      letter-spacing: -0.01em;
+    }
+    
+    .payment-info {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-md);
+      font-size: var(--font-size-xs);
+      color: var(--gray-700);
+      flex: 1; /* Fill remaining space */
+    }
+    
+    .payment-detail {
+      display: flex;
+      flex-direction: column;
+      background: var(--white);
+      padding: var(--space-sm);
+      border-radius: 3px;
+      border: 1px solid rgba(233, 37, 31, 0.1);
+    }
+    
+    .payment-label {
+      font-weight: 600;
+      color: var(--gray-900);
+      margin-bottom: 1px;
+      text-transform: uppercase;
+      font-size: 7px;
+      letter-spacing: 0.6px;
+    }
+    
+    .payment-value {
+      font-weight: 500;
+      color: var(--gray-800);
+      font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
+      font-size: var(--font-size-xs);
+    }
+    
+    /* Total Amount Box - WITH VAT NOTE INSIDE */
+    .total-section {
+      flex: 1;
+      background: var(--white);
+      border-radius: 6px;
+      padding: 24px 20px;
+      border: 1px solid var(--gray-200);
+      border-top: 4px solid var(--primary);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    
+    .total-row {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 16px; /* Space for VAT note below */
+    }
+    
+    .total-row.total {
+      border: none;
+      background: none;
+      margin: 0;
+      margin-bottom: 16px; /* Space for VAT note */
+      padding: 0;
+      border-radius: 0;
+    }
+    
+    .total-label {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--gray-700);
+      letter-spacing: 0.3px;
+      text-transform: uppercase;
+    }
+    
+    .total-amount {
+      font-size: 24px; /* Reduced from 28px - less overwhelming */
+      font-weight: 700;
+      color: var(--gray-900);
+      letter-spacing: -0.02em;
+      white-space: nowrap;
+    }
+    
+    /* VAT Note - INSIDE TOTAL CARD */
+    .tax-footnote {
+      background: transparent;
+      border: none;
+      border-radius: 0;
+      padding: 0;
+      font-size: 11px;
+      color: var(--gray-600);
+      text-align: center;
+      font-weight: 500;
+      font-style: italic;
+      box-shadow: none;
+      width: auto; /* Reset width */
+      border-top: 1px solid var(--gray-200); /* Subtle separator line */
+      padding-top: 12px;
+    }
+    
+    /* Notes Section - ORIGINAL DESIGN RESTORED */
+    .notes-section {
+      background: var(--gray-50);
+      border-radius: 5px;
+      padding: var(--space-md);
+      border-left: 3px solid var(--gray-400);
+      border: 1px solid var(--gray-200);
+      margin-top: 24px;
+      height: fit-content;
+    }
+    
+    .notes-title {
+      font-size: var(--font-size-sm);
+      font-weight: 700;
+      color: var(--gray-900);
+      margin-bottom: var(--space-xs);
+      letter-spacing: -0.01em;
+    }
+    
+    .notes-text {
+      font-size: var(--font-size-xs);
+      color: var(--gray-700);
+      line-height: 1.4;
+    }
+    
+    .notes-text strong {
+      color: var(--gray-900);
+      font-weight: 600;
+    }
+    
+    /* Footer - IMPROVED READABILITY */
+    .invoice-footer {
+      height: var(--footer-height);
+      padding: var(--space-xs) var(--content-margin);
+      border-top: 1px solid var(--gray-200);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: linear-gradient(135deg, var(--white) 0%, var(--gray-50) 100%);
+      flex-shrink: 0;
+    }
+    
+    .footer-company {
+      font-size: 10px; /* Increased from 8px for better readability */
+      font-weight: 600;
+      color: var(--gray-700);
+      letter-spacing: 0.2px;
+    }
+    
+    .footer-contact {
+      display: flex;
+      gap: var(--space-md);
+      font-size: 9px; /* Increased from 7px for better readability */
+      color: var(--gray-600);
+    }
+    
+    .contact-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-xs);
+    }
+    
+    .contact-item svg {
+      opacity: 0.7;
+    }
+    
+    /* Print Button */
+    .print-button {
+      display: none !important; /* Hidden - now in dock */
+    }
+
+    /* Print-specific styles */
+    @media print {
+      body {
+        padding: 0;
+        margin: 0;
+        background: white;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        color-adjust: exact !important;
+      }
+      
+      .page {
+        margin: 0;
+        box-shadow: none;
+        page-break-after: always;
+        width: 210mm;
+        height: 297mm;
+        overflow: visible;
+        border-radius: 0;
+      }
+      
+      .print-button {
+        display: none !important;
+      }
+      
+      .invoice-header {
+        border-top: 8px solid var(--primary) !important;
+        background: var(--white) !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+      
+      .logo-square {
+        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%) !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+      
+      .items-table th {
+        background: var(--gray-900) !important;
+        color: var(--white) !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+      
+      .items-table th::after {
+        background: linear-gradient(90deg, var(--primary) 0%, var(--primary-dark) 100%) !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+      
+      .payment-section {
+        background: var(--primary-ultralight) !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+      
+      .payment-section::before {
+        background: linear-gradient(90deg, var(--primary) 0%, var(--primary-dark) 100%) !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+      
+      .customer-section {
+        background: var(--gray-50) !important;
+        border-left-color: var(--primary) !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+      
+      .total-row.total {
+        border-top-color: var(--primary) !important;
+        background: var(--primary-ultralight) !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+      
+      .total-section {
+        background: var(--white) !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+      
+      .tax-footnote {
+        background: var(--primary-ultralight) !important;
+        border-color: rgba(233, 37, 31, 0.2) !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+      
+      .notes-section {
+        background: var(--gray-50) !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+      
+      .payment-detail {
+        background: var(--white) !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+    }
+
+    /* Total Amount Container - CLEAN STACK */
+    .total-amount-container {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      align-self: start;
+    }
+
+    /* ===== ENTERPRISE PRELOADER SYSTEM ===== */
+    .preloader {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: linear-gradient(135deg, 
+        rgba(255, 255, 255, 0.98) 0%, 
+        rgba(252, 252, 253, 0.98) 50%,
+        rgba(248, 250, 252, 0.98) 100%);
+      backdrop-filter: blur(40px) saturate(200%);
+      -webkit-backdrop-filter: blur(40px) saturate(200%);
+      z-index: 99999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 1;
+      visibility: visible;
+      transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      overflow: hidden;
+    }
+
+    .preloader.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .preloader::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: 
+        radial-gradient(circle at 20% 80%, rgba(233, 37, 31, 0.03) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(233, 37, 31, 0.02) 0%, transparent 50%),
+        radial-gradient(circle at 40% 40%, rgba(233, 37, 31, 0.01) 0%, transparent 50%);
+      animation: preloaderGlow 12s ease-in-out infinite;
+    }
+
+    @keyframes preloaderGlow {
+      0%, 100% { 
+        opacity: 0.3;
+        transform: scale(1);
+      }
+      50% { 
+        opacity: 0.6;
+        transform: scale(1.1);
+      }
+    }
+
+    /* Splash Screen */
+    .preloader-splash {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 48px;
+      opacity: 1;
+      transform: scale(1);
+      transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      position: relative;
+      z-index: 2;
+    }
+
+    .preloader-splash.fade-out {
+      opacity: 0;
+      transform: scale(0.95) translateY(-20px);
+    }
+
+    .preloader-logo {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      position: relative;
+    }
+
+    .preloader-logo-icon {
+      width: 80px;
+      height: 80px;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      border-radius: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 
+        0 8px 32px rgba(233, 37, 31, 0.25),
+        0 4px 16px rgba(233, 37, 31, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+      animation: logoFloat 4s ease-in-out infinite;
+    }
+
+    .preloader-logo-icon::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(45deg, transparent 25%, rgba(255, 255, 255, 0.1) 50%, transparent 75%);
+      animation: logoShine 3s ease-in-out infinite;
+    }
+
+    .preloader-logo-icon svg {
+      width: 44px;
+      height: 44px;
+      color: var(--white);
+      position: relative;
+      z-index: 2;
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+    }
+
+    @keyframes logoFloat {
+      0%, 100% { 
+        transform: translateY(0px) rotate(0deg); 
+        box-shadow: 
+          0 8px 32px rgba(233, 37, 31, 0.25),
+          0 4px 16px rgba(233, 37, 31, 0.15);
+      }
+      50% { 
+        transform: translateY(-8px) rotate(2deg); 
+        box-shadow: 
+          0 12px 40px rgba(233, 37, 31, 0.3),
+          0 6px 20px rgba(233, 37, 31, 0.2);
+      }
+    }
+
+    @keyframes logoShine {
+      0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+      50% { transform: translateX(-50%) translateY(-50%) rotate(45deg); }
+      100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+    }
+
+    .preloader-brand {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .preloader-title {
+      font-size: 48px;
+      font-weight: 700;
+      color: var(--gray-950);
+      letter-spacing: -0.02em;
+      line-height: 1;
+      font-family: 'Helvetica Neue', sans-serif;
+      margin: 0;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: titleSlide 1s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.3s forwards;
+    }
+
+    .preloader-title .highlight {
+      color: var(--primary);
+      position: relative;
+    }
+
+    .preloader-subtitle {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--gray-600);
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      margin: 0;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: titleSlide 1s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.6s forwards;
+    }
+
+    @keyframes titleSlide {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .preloader-spinner {
+      width: 60px;
+      height: 60px;
+      position: relative;
+      opacity: 0;
+      animation: spinnerFade 1s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.9s forwards;
+    }
+
+    .preloader-spinner::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: 3px solid rgba(233, 37, 31, 0.1);
+      border-top: 3px solid var(--primary);
+      border-radius: 50%;
+      animation: spin 1.2s linear infinite;
+    }
+
+    .preloader-spinner::after {
+      content: '';
+      position: absolute;
+      top: 6px;
+      left: 6px;
+      width: calc(100% - 12px);
+      height: calc(100% - 12px);
+      border: 2px solid transparent;
+      border-top: 2px solid var(--primary-dark);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite reverse;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes spinnerFade {
+      to { opacity: 1; }
+    }
+
+    /* Password Screen */
+    .preloader-auth {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 40px;
+      opacity: 0;
+      transform: scale(0.95) translateY(20px);
+      transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      position: relative;
+      z-index: 2;
+      max-width: 420px;
+      width: 90%;
+    }
+
+    .preloader-auth.active {
+      display: flex;
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+
+    .auth-header {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .auth-title {
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--gray-950);
+      margin: 0;
+      letter-spacing: -0.01em;
+      font-family: 'Helvetica Neue', sans-serif;
+    }
+
+    .auth-subtitle {
+      font-size: 16px;
+      font-weight: 400;
+      color: var(--gray-600);
+      margin: 0;
+      line-height: 1.5;
+    }
+
+    .auth-form {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .auth-field-group {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .auth-field-group label {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--gray-800);
+      margin: 0;
+    }
+
+    .auth-input {
+      width: 100%;
+      padding: 16px 20px;
+      border: 2px solid rgba(0, 0, 0, 0.08);
+      border-radius: 12px;
+      font-size: 16px;
+      font-family: 'Helvetica Neue', sans-serif;
+      font-weight: 500;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(252, 252, 253, 0.95) 100%);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 
+        0 2px 8px rgba(0, 0, 0, 0.04),
+        inset 0 1px 0 rgba(255, 255, 255, 0.9);
+      outline: none;
+      box-sizing: border-box;
+    }
+
+    .auth-input:focus {
+      border-color: var(--primary);
+      background: var(--white);
+      box-shadow: 
+        0 0 0 4px rgba(233, 37, 31, 0.08),
+        0 2px 8px rgba(233, 37, 31, 0.06),
+        inset 0 1px 0 rgba(255, 255, 255, 0.9);
+      transform: translateY(-1px);
+    }
+
+    .auth-input.error {
+      border-color: #dc2626;
+      background: rgba(220, 38, 38, 0.02);
+      box-shadow: 
+        0 0 0 4px rgba(220, 38, 38, 0.08),
+        0 4px 16px rgba(220, 38, 38, 0.06);
+      animation: inputShake 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    @keyframes inputShake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-8px); }
+      75% { transform: translateX(8px); }
+    }
+
+    .auth-button {
+      width: 100%;
+      padding: 18px 24px;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      color: var(--white);
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      font-family: 'Helvetica Neue', sans-serif;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 
+        0 4px 16px rgba(233, 37, 31, 0.25),
+        0 2px 8px rgba(233, 37, 31, 0.15);
+      position: relative;
+      overflow: hidden;
+      letter-spacing: -0.01em;
+    }
+
+    .auth-button:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 
+        0 6px 20px rgba(233, 37, 31, 0.3),
+        0 4px 12px rgba(233, 37, 31, 0.2);
+    }
+
+    .auth-button:active {
+      transform: translateY(0);
+    }
+
+    .auth-button:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .auth-button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.1) 50%, transparent 100%);
+      transition: left 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .auth-button:hover::before {
+      left: 100%;
+    }
+
+    .auth-error {
+      background: linear-gradient(135deg, rgba(220, 38, 38, 0.08) 0%, rgba(220, 38, 38, 0.04) 100%);
+      border: 1px solid rgba(220, 38, 38, 0.15);
+      border-radius: 8px;
+      padding: 12px 16px;
+      color: #991b1b;
+      font-size: 14px;
+      font-weight: 500;
+      display: none;
+      align-items: center;
+      gap: 8px;
+      opacity: 0;
+      transform: translateY(-10px);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .auth-error.show {
+      display: flex;
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .auth-error svg {
+      width: 16px;
+      height: 16px;
+      color: #dc2626;
+      flex-shrink: 0;
+    }
+
+    /* Enterprise Document Switcher - Premium Design */
+    .document-switcher {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(252, 252, 253, 0.98) 100%);
+      backdrop-filter: blur(32px) saturate(180%);
+      -webkit-backdrop-filter: blur(32px) saturate(180%);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+      z-index: 10000;
+      padding: 20px 32px;
+      box-shadow: 
+        0 2px 8px rgba(0, 0, 0, 0.02),
+        0 8px 32px rgba(0, 0, 0, 0.04),
+        0 32px 128px rgba(0, 0, 0, 0.02);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .document-switcher::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 100%;
+      background: 
+        radial-gradient(circle at 20% 50%, rgba(233, 37, 31, 0.02) 0%, transparent 50%),
+        radial-gradient(circle at 80% 50%, rgba(233, 37, 31, 0.015) 0%, transparent 50%);
+      pointer-events: none;
+    }
+
+    .switcher-container {
+      max-width: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      gap: 40px;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Brand Identity - Enhanced */
+    .brand-identity {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+      color: var(--gray-950);
+      font-weight: 700;
+      font-size: 1.5rem;
+      transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      position: relative;
+      z-index: 2;
+    }
+
+    .logo:hover {
+      color: var(--primary);
+      transform: translateY(-1px);
+    }
+
+    .logo-highlight {
+      color: var(--primary);
+      position: relative;
+      display: inline-block;
+    }
+
+    .logo-highlight::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: linear-gradient(90deg, var(--primary) 0%, var(--primary-dark) 100%);
+      border-radius: 2px;
+      transform: scaleX(0.7) translateY(3px);
+      opacity: 0;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+
+    .logo:hover .logo-highlight::after {
+      transform: scaleX(1) translateY(3px);
+      opacity: 1;
+    }
+
+    .logo-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 44px;
+      height: 44px;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      color: var(--white);
+      border-radius: 14px;
+      margin-right: 16px;
+      transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      overflow: hidden;
+      position: relative;
+      box-shadow: 0 4px 16px rgba(233, 37, 31, 0.25);
+    }
+
+    .logo-icon::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, transparent 100%);
+      pointer-events: none;
+    }
+
+    .logo-icon::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(45deg, transparent 25%, rgba(255, 255, 255, 0.15) 50%, transparent 75%);
+      transform: translateX(-100%);
+      transition: transform 0.6s ease;
+    }
+
+    .logo:hover .logo-icon {
+      transform: rotate(5deg) scale(1.05);
+      box-shadow: 0 6px 24px rgba(233, 37, 31, 0.35);
+    }
+
+    .logo:hover .logo-icon::after {
+      transform: translateX(100%);
+    }
+
+    .brand-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .brand-subtitle {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--gray-600);
+      letter-spacing: 0.5px;
+      line-height: 1.2;
+    }
+
+    .brand-status {
+      font-size: 10px;
+      font-weight: 500;
+      color: var(--primary);
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      background: var(--primary-light);
+      padding: 2px 6px;
+      border-radius: 4px;
+      width: fit-content;
+    }
+
+    /* Header Center - Document Status */
+    .header-center {
+      display: flex;
+      justify-content: center;
+    }
+
+    .document-status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(248, 250, 252, 0.8) 100%);
+      padding: 8px 16px;
+      border-radius: 20px;
+      border: 1px solid rgba(0, 0, 0, 0.06);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    }
+
+    .status-indicator {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--gray-400);
+      position: relative;
+    }
+
+    .status-indicator.active {
+      background: var(--primary);
+      animation: statusPulse 2s infinite;
+    }
+
+    .status-indicator.active::after {
+      content: '';
+      position: absolute;
+      top: -2px;
+      left: -2px;
+      right: -2px;
+      bottom: -2px;
+      border-radius: 50%;
+      border: 1px solid var(--primary);
+      opacity: 0;
+      animation: statusRing 2s infinite;
+    }
+
+    @keyframes statusPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.2); }
+    }
+
+    @keyframes statusRing {
+      0% { transform: scale(0.8); opacity: 1; }
+      100% { transform: scale(2); opacity: 0; }
+    }
+
+    .status-text {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--gray-700);
+      white-space: nowrap;
+    }
+
+    /* Header Right - Action Buttons */
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      justify-content: flex-end;
+    }
+
+    .action-btn {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 250, 252, 0.9) 100%);
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      color: var(--gray-600);
+      cursor: pointer;
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .action-btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.5) 0%, transparent 100%);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      pointer-events: none;
+    }
+
+    .action-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+      color: var(--gray-800);
+      border-color: rgba(0, 0, 0, 0.12);
+    }
+
+    .action-btn:hover::before {
+      opacity: 1;
+    }
+
+    .action-btn.danger {
+      color: #dc2626;
+    }
+
+    .action-btn.danger:hover {
+      background: linear-gradient(135deg, rgba(220, 38, 38, 0.08) 0%, rgba(220, 38, 38, 0.04) 100%);
+      color: #dc2626;
+      border-color: rgba(220, 38, 38, 0.15);
+      box-shadow: 0 6px 20px rgba(220, 38, 38, 0.12);
+    }
+
+    /* Reset Confirmation Modal */
+    .reset-modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, 
+        rgba(0, 0, 0, 0.4) 0%, 
+        rgba(0, 0, 0, 0.6) 50%,
+        rgba(0, 0, 0, 0.4) 100%);
+      backdrop-filter: blur(20px) saturate(120%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 20000;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    .reset-modal-overlay.active {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+    }
+
+    .reset-modal {
+      background: linear-gradient(135deg, 
+        rgba(255, 255, 255, 0.98) 0%, 
+        rgba(252, 252, 253, 0.98) 100%);
+      backdrop-filter: blur(40px) saturate(180%);
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 
+        0 32px 64px rgba(0, 0, 0, 0.12),
+        0 16px 32px rgba(0, 0, 0, 0.08),
+        0 8px 16px rgba(0, 0, 0, 0.04);
+      max-width: 480px;
+      width: 90%;
+      transform: scale(0.9) translateY(40px);
+      transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .reset-modal-overlay.active .reset-modal {
+      transform: scale(1) translateY(0);
+    }
+
+    .reset-modal::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 100%;
+      background: 
+        radial-gradient(circle at 20% 20%, rgba(220, 38, 38, 0.03) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(220, 38, 38, 0.02) 0%, transparent 50%);
+      pointer-events: none;
+    }
+
+    .reset-modal-header {
+      padding: 32px 32px 24px 32px;
+      text-align: center;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+      position: relative;
+      z-index: 2;
+    }
+
+    .reset-modal-icon {
+      width: 64px;
+      height: 64px;
+      background: linear-gradient(135deg, rgba(220, 38, 38, 0.1) 0%, rgba(220, 38, 38, 0.05) 100%);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 16px auto;
+      color: #dc2626;
+      box-shadow: 0 8px 24px rgba(220, 38, 38, 0.15);
+    }
+
+    .reset-modal-header h3 {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--gray-950);
+      margin: 0 0 8px 0;
+      letter-spacing: -0.02em;
+    }
+
+    .reset-modal-header p {
+      font-size: 16px;
+      color: var(--gray-600);
+      margin: 0;
+    }
+
+    .reset-modal-content {
+      padding: 24px 32px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .reset-warning {
+      background: linear-gradient(135deg, rgba(220, 38, 38, 0.04) 0%, rgba(220, 38, 38, 0.02) 100%);
+      border: 1px solid rgba(220, 38, 38, 0.1);
+      border-radius: 12px;
+      padding: 20px;
+    }
+
+    .reset-warning strong {
+      color: #dc2626;
+      font-weight: 600;
+      font-size: 14px;
+      display: block;
+      margin-bottom: 12px;
+    }
+
+    .reset-warning ul {
+      margin: 0;
+      padding-left: 16px;
+      color: var(--gray-700);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .reset-warning li {
+      margin-bottom: 4px;
+    }
+
+    .reset-modal-actions {
+      padding: 24px 32px 32px 32px;
+      display: flex;
+      gap: 12px;
+      justify-content: flex-end;
+      border-top: 1px solid rgba(0, 0, 0, 0.06);
+      position: relative;
+      z-index: 2;
+    }
+
+    .reset-cancel-btn,
+    .reset-confirm-btn {
+      padding: 14px 24px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      border: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 48px;
+    }
+
+    .reset-cancel-btn {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 250, 252, 0.9) 100%);
+      color: var(--gray-600);
+      border: 1px solid rgba(0, 0, 0, 0.08);
+    }
+
+    .reset-cancel-btn:hover {
+      background: linear-gradient(135deg, rgba(248, 250, 252, 0.95) 0%, rgba(241, 245, 249, 0.95) 100%);
+      color: var(--gray-800);
+      border-color: rgba(0, 0, 0, 0.12);
+      transform: translateY(-1px);
+    }
+
+    .reset-confirm-btn {
+      background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+      color: var(--white);
+      box-shadow: 0 4px 12px rgba(220, 38, 38, 0.25);
+    }
+
+    .reset-confirm-btn:hover {
+      background: linear-gradient(135deg, #b91c1c 0%, #991b1b 100%);
+      box-shadow: 0 6px 16px rgba(220, 38, 38, 0.35);
+      transform: translateY(-1px);
+    }
+
+    /* Mobile Settings Icon */
+    .mobile-menu-toggle {
+      display: none;
+      background: rgba(0, 0, 0, 0.04);
+      border: none;
+      color: var(--gray-800);
+      cursor: pointer;
+      padding: 10px;
+      border-radius: 10px;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      min-width: 44px;
+      min-height: 44px;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .mobile-menu-toggle svg {
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      width: 20px;
+      height: 20px;
+    }
+
+    .mobile-menu-toggle.active {
+      background: rgba(233, 37, 31, 0.08);
+      color: var(--primary);
+    }
+
+    .mobile-menu-toggle.active svg {
+      transform: rotate(180deg);
+      color: var(--primary);
+    }
+
+    .mobile-menu-toggle.closing {
+      background: rgba(0, 0, 0, 0.04);
+      color: var(--gray-800);
+    }
+
+    .mobile-menu-toggle.closing svg {
+      transform: rotate(0deg);
+      color: var(--gray-800);
+      animation: settingsClose 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    }
+
+    @keyframes settingsClose {
+      0% { 
+        transform: rotate(180deg) scale(1); 
+        opacity: 1;
+      }
+      50% { 
+        transform: rotate(90deg) scale(0.9); 
+        opacity: 0.7;
+      }
+      100% { 
+        transform: rotate(0deg) scale(1); 
+        opacity: 1;
+      }
+    }
+
+    /* World-Class Editable Sidebar - High-End SaaS Design */
+    #editor {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 380px; /* Slightly wider for better content spacing */
+      height: 100vh;
+      background: linear-gradient(180deg, 
+        rgba(255, 255, 255, 0.98) 0%, 
+        rgba(251, 252, 254, 0.98) 50%,
+        rgba(248, 250, 252, 0.98) 100%);
+      backdrop-filter: blur(24px) saturate(180%);
+      -webkit-backdrop-filter: blur(24px) saturate(180%);
+      border-right: 1px solid rgba(0, 0, 0, 0.06);
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: 
+        8px 0 32px rgba(0, 0, 0, 0.08),
+        4px 0 16px rgba(0, 0, 0, 0.04),
+        2px 0 8px rgba(0, 0, 0, 0.02);
+    }
+
+    #editor header {
+      padding: 32px 32px 28px 32px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+      background: linear-gradient(135deg, 
+        rgba(255, 255, 255, 0.95) 0%, 
+        rgba(252, 252, 253, 0.95) 100%);
+      backdrop-filter: blur(12px);
+      position: relative;
+    }
+
+    #editor header::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary) 0%, var(--primary-dark) 100%);
+    }
+
+    #editor header h3 {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--gray-950);
+      letter-spacing: -0.02em;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    #editor header h3::before {
+      content: '';
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(233, 37, 31, 0.25);
+      mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z'/%3E%3Cpolyline points='14,2 14,8 20,8'/%3E%3Cline x1='16' y1='13' x2='8' y2='13'/%3E%3Cline x1='16' y1='17' x2='8' y2='17'/%3E%3Cline x1='10' y1='9' x2='8' y2='9'/%3E%3C/svg%3E") center/16px no-repeat;
+      -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z'/%3E%3Cpolyline points='14,2 14,8 20,8'/%3E%3Cline x1='16' y1='13' x2='8' y2='13'/%3E%3Cline x1='16' y1='17' x2='8' y2='17'/%3E%3Cline x1='10' y1='9' x2='8' y2='9'/%3E%3C/svg%3E") center/16px no-repeat;
+    }
+
+    #editor header .subtitle {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--gray-600);
+      margin-top: 4px;
+      letter-spacing: 0.01em;
+    }
+
+    #close-editor {
+      position: absolute;
+      top: 32px;
+      right: 32px;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 250, 252, 0.9) 100%);
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      color: var(--gray-600);
+      cursor: pointer;
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      font-weight: 400;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    }
+
+    #close-editor:hover {
+      background: linear-gradient(135deg, rgba(233, 37, 31, 0.08) 0%, rgba(233, 37, 31, 0.04) 100%);
+      color: var(--primary);
+      border-color: rgba(233, 37, 31, 0.15);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(233, 37, 31, 0.12);
+    }
+
+    #invoiceForm {
+      flex: 1;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      scroll-behavior: smooth;
+    }
+
+    #invoiceForm::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    #invoiceForm::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.02);
+    }
+
+    #invoiceForm::-webkit-scrollbar-thumb {
+      background: rgba(0, 0, 0, 0.1);
+      border-radius: 3px;
+    }
+
+    #invoiceForm::-webkit-scrollbar-thumb:hover {
+      background: rgba(0, 0, 0, 0.15);
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .form-section {
+      padding: 24px 32px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+      position: relative;
+    }
+
+    .form-section:hover {
+      background: rgba(0, 0, 0, 0.01);
+    }
+
+    .form-section:last-child {
+      border-bottom: none;
+    }
+
+    .form-section h4 {
+      margin: 0 0 20px 0;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--gray-900);
+      letter-spacing: -0.01em;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .form-section h4::before {
+      content: '';
+      width: 20px;
+      height: 20px;
+      background: linear-gradient(135deg, var(--primary-light) 0%, rgba(233, 37, 31, 0.12) 100%);
+      border-radius: 6px;
+      mask: var(--section-icon, url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23e9251f' stroke-width='2'%3E%3Ccircle cx='12' cy='12' r='3'/%3E%3C/svg%3E")) center/12px no-repeat;
+      -webkit-mask: var(--section-icon, url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23e9251f' stroke-width='2'%3E%3Ccircle cx='12' cy='12' r='3'/%3E%3C/svg%3E")) center/12px no-repeat;
+    }
+
+    /* Section-specific icons */
+    .form-section.customer h4::before {
+      --section-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23e9251f' stroke-width='2'%3E%3Cpath d='M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2'/%3E%3Ccircle cx='12' cy='7' r='4'/%3E%3C/svg%3E");
+    }
+
+    .form-section.items h4::before {
+      --section-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23e9251f' stroke-width='2'%3E%3Cpath d='M9 11H5a2 2 0 0 0-2 2v3c0 1.1.9 2 2 2h4m6-6h4a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2h-4m-6 0v-5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v5m-6 0h6'/%3E%3C/svg%3E");
+    }
+
+    .form-section.payment h4::before {
+      --section-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23e9251f' stroke-width='2'%3E%3Crect x='1' y='4' width='22' height='16' rx='2' ry='2'/%3E%3Cline x1='1' y1='10' x2='23' y2='10'/%3E%3C/svg%3E");
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .section-header h4 {
+      margin: 0;
+    }
+
+    .add-button {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      color: var(--white);
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 4px 12px rgba(233, 37, 31, 0.25);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .add-button::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 10px;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, transparent 100%);
+      pointer-events: none;
+    }
+
+    .add-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(233, 37, 31, 0.35);
+    }
+
+    .form-group label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--gray-700);
+      margin-bottom: 6px;
+      letter-spacing: 0.01em;
+      line-height: 1.4;
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      padding: 14px 16px;
+      border: 1.5px solid rgba(0, 0, 0, 0.08);
+      border-radius: 10px;
+      font-size: 15px;
+      font-family: 'Helvetica Neue', sans-serif;
+      font-weight: 500;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(252, 252, 253, 0.95) 100%);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 
+        0 2px 4px rgba(0, 0, 0, 0.02),
+        inset 0 1px 0 rgba(255, 255, 255, 0.9);
+      color: var(--gray-800);
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: var(--primary);
+      background: var(--white);
+      box-shadow: 
+        0 0 0 4px rgba(233, 37, 31, 0.08),
+        0 4px 12px rgba(233, 37, 31, 0.06),
+        inset 0 1px 0 rgba(255, 255, 255, 0.9);
+      transform: translateY(-1px);
+    }
+
+    .form-group textarea {
+      resize: vertical;
+      min-height: 90px;
+      line-height: 1.5;
+    }
+
+    .form-group input::placeholder,
+    .form-group textarea::placeholder {
+      color: var(--gray-500);
+      font-weight: 400;
+    }
+
+    .form-group select {
+      cursor: pointer;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236b6b6b' stroke-width='2'%3E%3Cpolyline points='6,9 12,15 18,9'%3E%3C/polyline%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      background-size: 16px;
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+    }
+
+    #editor footer {
+      padding: 24px 28px 28px 28px;
+      border-top: 1px solid rgba(0, 0, 0, 0.04);
+      display: flex;
+      gap: 12px;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(252, 252, 253, 0.95) 100%);
+      backdrop-filter: blur(8px);
+      justify-content: center;
+      align-items: center;
+    }
+
+    #editor button {
+      flex: 1;
+      padding: 16px 24px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      border: none;
+      letter-spacing: -0.01em;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 48px;
+    }
+
+    #editor button.ghost {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 250, 252, 0.9) 100%);
+      color: var(--gray-600);
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+    }
+
+    #editor button.ghost:hover {
+      background: linear-gradient(135deg, rgba(248, 250, 252, 0.95) 0%, rgba(241, 245, 249, 0.95) 100%);
+      color: var(--gray-800);
+      border-color: rgba(0, 0, 0, 0.12);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.06);
+    }
+
+    #editor button.primary {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      color: var(--white);
+      box-shadow: 
+        0 4px 12px rgba(233, 37, 31, 0.25),
+        0 2px 4px rgba(233, 37, 31, 0.15);
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    #editor button.primary:hover:not(.processing):not(.success):not(.complete) {
+      box-shadow: 
+        0 6px 16px rgba(233, 37, 31, 0.3),
+        0 4px 8px rgba(233, 37, 31, 0.2);
+      transform: translateY(-1px);
+    }
+
+    /* Workspace */
+    .workspace {
+      position: fixed;
+      top: 76px;
+      left: 380px; /* Account for new sidebar width */
+      right: 0;
+      bottom: 0;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      background: #F7F8F9;
+    }
+
+    .invoice-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      max-width: 1400px;
+    }
+
+    /* Artboard System */
+    .artboard-container {
+      flex: 1;
+      width: 100%;
+      height: 100%;
+      background: #F7F8F9;
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .artboard-canvas {
+      position: relative;
+      width: 794px;
+      height: 1123px;
+      transform-origin: center center;
+      user-select: none;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+    }
+
+    .artboard-canvas .page {
+      user-select: none;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      pointer-events: none;
+    }
+
+    /* Page within artboard should be interactive for content but not draggable */
+    .artboard-canvas .page {
+      width: 794px;
+      height: 1123px;
+      position: relative;
+    }
+
+    /* Mobile Responsive */
+    @media screen and (max-width: 768px) {
+      .mobile-menu-toggle {
+        display: flex;
+      }
+
+      .document-switcher {
+        padding: 12px 24px;
+      }
+
+      .switcher-container {
+        padding: 0 16px;
+        gap: 20px;
+      }
+
+      .brand-subtitle {
+        display: none;
+      }
+
+      .workspace {
+        top: 76px;
+        left: 0;
+        background: #F7F8F9;
+      }
+
+      .zoom-controls {
+        bottom: 10px;
+        padding: 6px 12px;
+        border-radius: 6px;
+      }
+
+      .zoom-btn {
+        padding: 6px 8px;
+        font-size: 12px;
+        min-width: 32px;
+      }
+
+      .zoom-label {
+        font-size: 12px;
+        min-width: 40px;
+      }
+
+      #editor {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        max-height: 100vh;
+        overflow-y: auto;
+        transform: translateX(-100%);
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+      }
+
+      #editor.open {
+        transform: translateX(0);
+      }
+
+      #editor header {
+        padding: clamp(12px, 3vh, 20px) clamp(16px, 4vw, 20px);
+        flex-shrink: 0;
+      }
+
+      #editor header h3 {
+        font-size: clamp(14px, 3.5vw, 16px);
+      }
+
+      #invoiceForm {
+        flex: 1;
+        padding: clamp(16px, 4vw, 24px);
+        gap: clamp(12px, 3vh, 16px);
+        overflow-y: auto;
+      }
+
+      .form-group {
+        gap: clamp(8px, 2vh, 12px);
+      }
+
+      .form-group label {
+        font-size: clamp(10px, 2.5vw, 12px);
+        margin-bottom: clamp(3px, 1vh, 6px);
+      }
+
+      .form-group input,
+      .form-group textarea,
+      .form-group select {
+        min-height: clamp(40px, 8vh, 48px);
+        padding: clamp(10px, 2.5vh, 14px) clamp(12px, 3vw, 16px);
+        font-size: clamp(14px, 3.5vw, 16px);
+        border-radius: clamp(4px, 1.5vw, 8px);
+      }
+
+      #editor footer {
+        padding: clamp(16px, 4vw, 20px);
+        flex-direction: row;
+        gap: clamp(8px, 2vw, 12px);
+        flex-shrink: 0;
+        position: sticky;
+        bottom: 0;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(252, 252, 253, 0.98) 100%);
+        backdrop-filter: blur(8px);
+        border-top: 1px solid rgba(0, 0, 0, 0.04);
+      }
+
+      #editor button {
+        flex: 1;
+        min-height: clamp(40px, 8vh, 48px);
+        font-size: clamp(12px, 3vw, 14px);
+        padding: clamp(10px, 2.5vh, 14px) clamp(12px, 3vw, 16px);
+        border-radius: clamp(6px, 1.5vw, 10px);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
+
+    /* Print Safety */
+    @media print {
+      /* Hide everything first */
+      * {
+        visibility: hidden !important;
+      }
+      
+      /* Force page setup */
+      @page {
+        size: A4;
+        margin: 0;
+      }
+      
+      /* Show only the page and its contents */
+      .page,
+      .page *,
+      .page *::before,
+      .page *::after {
+        visibility: visible !important;
+      }
+      
+      /* Reset body for print */
+      body {
+        background: white !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+        overflow: visible !important;
+      }
+      
+      /* Position page absolutely to control print layout */
+      .page {
+        position: absolute !important;
+        left: 0 !important;
+        top: 0 !important;
+        width: 210mm !important;
+        height: 297mm !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        transform: none !important;
+        scale: none !important;
+        translate: none !important;
+        box-shadow: none !important;
+        border-radius: 0 !important;
+        background: white !important;
+        overflow: visible !important;
+        page-break-after: always !important;
+      }
+      
+      /* Ensure all containers are reset */
+      .workspace,
+      .artboard-container,
+      .artboard-canvas {
+        all: unset !important;
+        display: block !important;
+        position: static !important;
+        width: auto !important;
+        height: auto !important;
+        overflow: visible !important;
+        transform: none !important;
+        visibility: hidden !important;
+      }
+      
+      /* Hide UI elements completely */
+      .preloader,
+      .document-switcher,
+      #editor,
+      .print-button,
+      .figma-bottom-bar,
+      .help-overlay {
+        display: none !important;
+        visibility: hidden !important;
+      }
+    }
+
+    /* Zoom Controls */
+    .zoom-controls {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 8px 16px;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 8px;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+      z-index: 1000;
+    }
+
+    .zoom-btn {
+      background: linear-gradient(135deg, var(--white) 0%, var(--gray-50) 100%);
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      border-radius: 6px;
+      padding: 8px 12px;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--gray-800);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      min-width: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .zoom-btn:hover {
+      background: linear-gradient(135deg, var(--gray-50) 0%, var(--gray-100) 100%);
+      border-color: rgba(0, 0, 0, 0.15);
+      transform: translateY(-1px);
+    }
+
+    .zoom-btn:active {
+      transform: translateY(0);
+    }
+
+    .zoom-btn.secondary {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      color: var(--white);
+      border-color: var(--primary);
+    }
+
+    .zoom-btn.secondary:hover {
+      background: linear-gradient(135deg, var(--primary-dark) 0%, #b01e18 100%);
+    }
+
+    .zoom-label {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--gray-700);
+      min-width: 50px;
+      text-align: center;
+      margin: 0 4px;
+    }
+
+    /* Panning Cursors */
+    .artboard-container.pan-mode {
+      cursor: grab;
+    }
+
+    .artboard-container.pan-mode:active {
+      cursor: grabbing;
+    }
+
+    .artboard-container.pan-mode .artboard-canvas {
+      cursor: grab;
+    }
+
+    .artboard-container.pan-mode.panning .artboard-canvas {
+      cursor: grabbing;
+    }
+
+    /* Space Key Panning */
+    .artboard-container.space-panning {
+      cursor: grab;
+    }
+
+    .artboard-container.space-panning.dragging {
+      cursor: grabbing;
+    }
+
+    /* Hand Tool (H key) */
+    .artboard-container.hand-tool {
+      cursor: grab;
+    }
+
+    .artboard-container.hand-tool.dragging {
+      cursor: grabbing;
+    }
+
+    /* Zoom Tool (Z key) */
+    .artboard-container.zoom-tool {
+      cursor: zoom-in;
+    }
+
+    .artboard-container.zoom-tool:active {
+      cursor: zoom-out;
+    }
+
+    /* Figma-Style Floating Dock */
+    .figma-bottom-bar {
+      position: fixed;
+      bottom: 20px;
+      left: calc(50% + 190px); /* Center in artboard area: 50% viewport + half new sidebar width */
+      transform: translateX(-50%);
+      width: auto;
+      height: 48px;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(252, 252, 253, 0.95) 100%);
+      backdrop-filter: blur(20px) saturate(180%);
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      border-radius: 24px;
+      box-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.12),
+        0 4px 16px rgba(0, 0, 0, 0.08),
+        0 2px 8px rgba(0, 0, 0, 0.04);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 16px;
+      color: var(--gray-800);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .figma-bottom-bar:hover {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(252, 252, 253, 0.98) 100%);
+      box-shadow: 
+        0 12px 40px rgba(0, 0, 0, 0.15),
+        0 6px 20px rgba(0, 0, 0, 0.1),
+        0 3px 10px rgba(0, 0, 0, 0.06);
+      transform: translateX(-50%) translateY(-2px);
+    }
+
+    /* Zoom Controls Group */
+    .zoom-controls-group {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      background: rgba(0, 0, 0, 0.03);
+      border-radius: 20px;
+      padding: 2px;
+    }
+
+    .zoom-control-btn {
+      background: transparent;
+      border: none;
+      color: var(--gray-600);
+      border-radius: 18px;
+      padding: 6px 8px;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+    }
+
+    .zoom-control-btn:hover:not(:disabled) {
+      background: rgba(0, 0, 0, 0.06);
+      color: var(--gray-800);
+      transform: scale(1.1);
+    }
+
+    .zoom-control-btn:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .zoom-divider {
+      width: 1px;
+      height: 16px;
+      background: rgba(0, 0, 0, 0.1);
+      margin: 0 4px;
+    }
+
+    .zoom-percentage {
+      background: transparent;
+      border: none;
+      color: var(--gray-700);
+      border-radius: 16px;
+      padding: 6px 10px;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      font-size: 12px;
+      font-weight: 600;
+      min-width: 48px;
+      text-align: center;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .zoom-percentage:hover {
+      background: rgba(0, 0, 0, 0.06);
+      color: var(--gray-900);
+      transform: scale(1.05);
+    }
+
+    .dock-divider {
+      width: 1px;
+      height: 24px;
+      background: linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, 0.15) 50%, transparent 100%);
+      margin: 0 8px;
+    }
+
+    .zoom-action-btn {
+      background: transparent;
+      border: none;
+      color: var(--gray-600);
+      border-radius: 16px;
+      padding: 6px 12px;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      font-size: 12px;
+      font-weight: 500;
+      white-space: nowrap;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .zoom-action-btn:hover {
+      background: rgba(0, 0, 0, 0.06);
+      color: var(--gray-800);
+      transform: scale(1.05);
+    }
+
+    /* Add Item Button - Floating */
+    .add-item-group {
+      position: relative;
+    }
+
+    .add-item-btn {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      color: var(--white);
+      border: none;
+      border-radius: 50%;
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 
+        0 4px 12px rgba(233, 37, 31, 0.3),
+        0 2px 6px rgba(233, 37, 31, 0.2);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .add-item-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, transparent 100%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .add-item-btn:hover {
+      transform: scale(1.1);
+      box-shadow: 
+        0 6px 16px rgba(233, 37, 31, 0.4),
+        0 3px 8px rgba(233, 37, 31, 0.3);
+    }
+
+    /* Help Button */
+    .help-group {
+      display: flex;
+      align-items: center;
+    }
+
+    .help-btn {
+      background: transparent;
+      border: none;
+      color: var(--gray-600);
+      border-radius: 18px;
+      padding: 6px;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+    }
+
+    .help-btn:hover {
+      background: rgba(233, 37, 31, 0.08);
+      color: var(--primary);
+      transform: scale(1.1);
+    }
+
+    /* Help Overlay - Enterprise Grade */
+    .help-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, 
+        rgba(0, 0, 0, 0.4) 0%, 
+        rgba(0, 0, 0, 0.6) 50%,
+        rgba(0, 0, 0, 0.4) 100%);
+      backdrop-filter: blur(20px) saturate(120%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 10000;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      transform: translateX(190px); /* Shift right by half new sidebar width to center in artboard */
+    }
+
+    .help-overlay.active {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+    }
+
+    .help-panel {
+      background: linear-gradient(135deg, 
+        rgba(255, 255, 255, 0.98) 0%, 
+        rgba(252, 252, 253, 0.98) 50%,
+        rgba(248, 250, 252, 0.98) 100%);
+      backdrop-filter: blur(40px) saturate(180%);
+      border-radius: 24px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 0;
+      box-shadow: 
+        0 32px 64px rgba(0, 0, 0, 0.12),
+        0 16px 32px rgba(0, 0, 0, 0.08),
+        0 8px 16px rgba(0, 0, 0, 0.04),
+        inset 0 1px 0 rgba(255, 255, 255, 0.4);
+      max-width: 720px;
+      width: 90%;
+      max-height: 85vh;
+      overflow: hidden;
+      transform: scale(0.9) translateY(40px);
+      transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      position: relative;
+    }
+
+    .help-overlay.active .help-panel {
+      transform: scale(1) translateY(0);
+    }
+
+    .help-panel::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 100%;
+      background: 
+        radial-gradient(circle at 20% 20%, rgba(233, 37, 31, 0.03) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(233, 37, 31, 0.02) 0%, transparent 50%);
+      border-radius: 24px;
+      pointer-events: none;
+    }
+
+    .help-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 32px 40px 24px 40px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+      background: linear-gradient(135deg, 
+        rgba(255, 255, 255, 0.8) 0%, 
+        rgba(252, 252, 253, 0.8) 100%);
+      backdrop-filter: blur(20px);
+      position: relative;
+      z-index: 2;
+    }
+
+    .help-header h3 {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--gray-950);
+      margin: 0;
+      letter-spacing: -0.02em;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .help-header h3::before {
+      display: none; /* Remove old icon */
+    }
+
+    .help-header .brand-icon {
+      width: 24px;
+      height: 24px;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 6px rgba(233, 37, 31, 0.25);
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .help-header .brand-icon::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 6px;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, transparent 100%);
+      pointer-events: none;
+    }
+
+    .help-header .brand-icon svg {
+      width: 12px;
+      height: 12px;
+      color: var(--white);
+      filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
+    }
+
+    .help-close {
+      background: rgba(0, 0, 0, 0.03);
+      border: 1px solid rgba(0, 0, 0, 0.06);
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 18px;
+      color: var(--gray-500);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 300;
+    }
+
+    .help-close:hover {
+      background: rgba(233, 37, 31, 0.08);
+      border-color: rgba(233, 37, 31, 0.2);
+      color: var(--primary);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(233, 37, 31, 0.15);
+    }
+
+    .help-content {
+      padding: 24px 32px 32px 32px;
+      position: relative;
+      z-index: 2;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      max-height: none; /* Remove height constraint */
+      overflow: visible; /* No scrolling needed */
+    }
+
+    .help-section {
+      background: linear-gradient(135deg, 
+        rgba(255, 255, 255, 0.6) 0%, 
+        rgba(252, 252, 253, 0.6) 100%);
+      border: 1px solid rgba(0, 0, 0, 0.04);
+      border-radius: 12px;
+      padding: 16px; /* Reduced padding */
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .help-section h4 {
+      font-size: 16px; /* Smaller heading */
+      font-weight: 700;
+      color: var(--gray-950);
+      margin: 0 0 12px 0; /* Reduced margin */
+      display: flex;
+      align-items: center;
+      gap: 8px; /* Reduced gap */
+      letter-spacing: -0.01em;
+    }
+
+    .help-shortcut {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 0; /* Reduced padding */
+      border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+      transition: all 0.2s ease;
+    }
+
+    .help-shortcut:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .help-shortcut:hover {
+      padding-left: 8px;
+    }
+
+    .help-shortcut-desc {
+      font-size: 13px; /* Slightly smaller text */
+      color: var(--gray-700);
+      font-weight: 500;
+      line-height: 1.3; /* Tighter line height */
+    }
+
+    .help-shortcut-keys {
+      display: flex;
+      gap: 4px;
+      align-items: center;
+    }
+
+    .help-key {
+      background: linear-gradient(135deg, var(--white) 0%, var(--gray-100) 100%);
+      border: 1px solid rgba(0, 0, 0, 0.12);
+      border-bottom: 2px solid rgba(0, 0, 0, 0.2);
+      color: var(--gray-800);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, monospace;
+      min-width: 24px;
+      text-align: center;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+    }
+
+    .help-key.modifier {
+      background: linear-gradient(135deg, var(--gray-100) 0%, var(--gray-200) 100%);
+      font-size: 10px;
+    }
+
+    .help-plus {
+      color: var(--gray-400);
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    /* Mobile responsive for help overlay */
+    @media screen and (max-width: 768px) {
+      .help-panel {
+        width: 95%;
+        max-width: none;
+        border-radius: 20px;
+        margin: 20px;
+      }
+
+      .help-header {
+        padding: 24px 24px 20px 24px;
+      }
+
+      .help-header h3 {
+        font-size: 20px;
+      }
+
+      .help-content {
+        grid-template-columns: 1fr;
+        gap: 20px;
+        padding: 24px;
+      }
+
+      .help-section {
+        padding: 20px;
+      }
+
+      .help-section h4 {
+        font-size: 16px;
+      }
+    }
+
+    /* Mobile responsive for bottom bar */
+    @media screen and (max-width: 768px) {
+      .figma-bottom-bar {
+        left: 50%;
+        transform: translateX(-50%);
+        right: auto;
+        padding: 4px 12px;
+        height: 44px;
+        border-radius: 22px;
+        bottom: 16px;
+        gap: 6px;
+      }
+
+      .zoom-controls-group {
+        gap: 1px;
+        padding: 1px;
+        border-radius: 18px;
+      }
+
+      .zoom-control-btn {
+        width: 28px;
+        height: 28px;
+        padding: 4px 6px;
+        border-radius: 16px;
+      }
+
+      .zoom-percentage {
+        min-width: 40px;
+        height: 28px;
+        padding: 4px 8px;
+        border-radius: 14px;
+        font-size: 11px;
+      }
+
+      .zoom-action-btn {
+        height: 28px;
+        padding: 4px 8px;
+        border-radius: 14px;
+        font-size: 11px;
+      }
+
+      .add-item-btn {
+        width: 32px;
+        height: 32px;
+      }
+
+      .help-btn {
+        width: 28px;
+        height: 28px;
+        padding: 4px;
+        border-radius: 16px;
+      }
+
+      .dock-divider {
+        height: 20px;
+        margin: 0 6px;
+      }
+
+      .zoom-divider {
+        height: 14px;
+        margin: 0 3px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- ===== ENTERPRISE PRELOADER SYSTEM ===== -->
+  <div class="preloader" id="preloader" aria-label="Application Loading">
+    <!-- Splash Screen -->
+    <div class="preloader-splash" id="splash">
+      <div class="preloader-logo">
+        <div class="preloader-logo-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+          </svg>
+        </div>
+        <div class="preloader-brand">
+          <h1 class="preloader-title">Event<span class="highlight">seiten.ch</span></h1>
+          <p class="preloader-subtitle">Rechnungs Generator</p>
+        </div>
+      </div>
+      <div class="preloader-spinner" aria-label="Loading"></div>
+    </div>
+
+    <!-- Password Authentication Screen -->
+    <div class="preloader-auth" id="auth">
+      <div class="auth-header">
+        <h2 class="auth-title">Zugriff erforderlich</h2>
+        <p class="auth-subtitle">Bitte geben Sie Ihre Anmeldedaten ein, um fortzufahren</p>
+      </div>
+
+      <form class="auth-form" id="authForm">
+        <div class="auth-field-group">
+          <label for="username">Benutzername oder E-Mail</label>
+          <input 
+            type="text" 
+            id="username" 
+            name="username" 
+            class="auth-input" 
+            placeholder="max.mustermann@beispiel.ch"
+            autocomplete="username"
+            required
+          >
+        </div>
+
+        <div class="auth-field-group">
+          <label for="password">Passwort</label>
+          <input 
+            type="password" 
+            id="password" 
+            name="password" 
+            class="auth-input" 
+            placeholder="Ihr Passwort eingeben"
+            autocomplete="current-password"
+            required
+          >
+        </div>
+
+        <div class="auth-error" id="authError" role="alert" aria-live="polite">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="15" y1="9" x2="9" y2="15"></line>
+            <line x1="9" y1="9" x2="15" y2="15"></line>
+          </svg>
+          <span id="authErrorText">Ungültige Anmeldedaten. Bitte versuchen Sie es erneut.</span>
+        </div>
+
+        <button type="submit" class="auth-button" id="authSubmit">
+          Anmelden
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Enterprise Document Switcher - Premium High-End Design -->
+  <div class="document-switcher">
+    <div class="switcher-container">
+      <div class="brand-identity">
+        <a href="https://eventseiten.ch" class="logo" target="_blank" rel="noopener noreferrer">
+          <span class="logo-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+              <polyline points="9 22 9 12 15 12 15 22"></polyline>
+            </svg>
+          </span>
+          Event<span class="logo-highlight">seiten.ch</span>
+        </a>
+        <div class="brand-info">
+          <span class="brand-subtitle">Enterprise Rechnungs Generator</span>
+          <span class="brand-status">Production Ready</span>
+        </div>
+      </div>
+      
+      <div class="header-center">
+        <div class="document-status">
+          <div class="status-indicator active"></div>
+          <span class="status-text">Rechnung wird bearbeitet</span>
+        </div>
+      </div>
+      
+      <div class="header-right">
+        <button class="action-btn" id="help-header-btn" title="Hilfe & Shortcuts">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+          </svg>
+        </button>
+        
+        <button class="action-btn danger" id="reset-all-btn" title="Alles zurücksetzen">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="1 4 1 10 7 10"></polyline>
+            <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+          </svg>
+        </button>
+        
+        <button class="mobile-menu-toggle" aria-label="Einstellungen öffnen">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path>
+            <circle cx="12" cy="12" r="3"></circle>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SOP-Specified Editable Sidebar - Left Side -->
+  <aside id="editor" aria-label="Invoice Editor">
+    <header>
+      <h3>Rechnung Details</h3>
+      <div class="subtitle">Enterprise Generator</div>
+      <button id="close-editor" aria-label="Close Editor">✕</button>
+    </header>
+    <form id="invoiceForm" autocomplete="off">
+      <!-- Invoice Basic Information -->
+      <div class="form-section">
+      <div class="form-group">
+        <label for="invoiceNumber">Rechnungsnummer</label>
+        <input name="invoiceNumber" id="invoiceNumber" required placeholder="R-2025-0001" value="R-2025-0001">
+      </div>
+      
+      <div class="form-group">
+        <label for="invoiceDate">Rechnungsdatum</label>
+        <input name="invoiceDate" id="invoiceDate" type="date" required value="2025-01-15">
+      </div>
+      
+      <div class="form-group">
+        <label for="dueDate">Fälligkeitsdatum</label>
+        <input name="dueDate" id="dueDate" type="date" required value="2025-02-14">
+        </div>
+      </div>
+      
+      <!-- Customer Information -->
+      <div class="form-section customer">
+        <h4>Kunde</h4>
+        <div class="form-group">
+          <label for="customerName">Kundenname</label>
+          <input name="customerName" id="customerName" required placeholder="[Kundenname]" value="[Kundenname]">
+        </div>
+        
+        <div class="form-group">
+          <label for="customerAddress">Adresse</label>
+          <textarea name="customerAddress" id="customerAddress" rows="3" placeholder="[Strasse und Hausnummer]&#10;[PLZ und Ort]&#10;[Land]">[Strasse und Hausnummer]
+[PLZ und Ort]
+[Land]</textarea>
+        </div>
+      </div>
+      
+      <!-- Invoice Items -->
+      <div class="form-section">
+        <div class="section-header">
+          <h4>Rechnungspositionen</h4>
+          <button type="button" id="add-item" class="add-button">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+          </button>
+        </div>
+        <div id="invoice-items">
+          <!-- Invoice items will be dynamically generated here -->
+        </div>
+      </div>
+      
+      <!-- Payment Profile -->
+      <div class="form-section">
+        <div class="section-header">
+          <h4>Zahlungsprofil</h4>
+          <select id="payment-profile" name="paymentProfile">
+            <option value="wise">Wise (Standard)</option>
+          </select>
+        </div>
+      </div>
+    </form>
+    
+    <footer>
+      <button id="reset" class="ghost">Zurücksetzen</button>
+      <button id="download" class="primary">PDF herunterladen</button>
+    </footer>
+  </aside>
+
+  <div class="workspace">
+    <!-- Artboard Container -->
+    <div class="artboard-container">
+      <div class="artboard-canvas">
+        <div class="page">
+          <header class="invoice-header">
+            <div class="logo-container">
+              <div class="logo-square">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                  <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                </svg>
+              </div>
+              <div class="logo-text">
+                Event<span class="highlight">seiten.ch</span>
+              </div>
+            </div>
+            <div class="document-info">
+              RECHNUNG
+            </div>
+          </header>
+          
+          <main class="content">
+            <!-- Invoice Information Section -->
+            <section class="invoice-info-section">
+              <div class="company-details">
+                <div class="company-name">ELK Media L.L.C.</div>
+                <div class="company-address">
+                  Betreiber von Eventseiten.ch<br>
+                  30 N Gould St, Ste R<br>
+                  Sheridan, WY 82801<br>
+                  USA<br><br>
+                  <strong>Schweizer Kundenbetreuung:</strong><br>
+                  support@eventseiten.ch<br>
+                  +43 677 62031215
+                </div>
+              </div>
+              
+              <div class="invoice-details">
+                <div class="invoice-title">Rechnung</div>
+                <div class="invoice-meta">
+                  <strong>Rechnungsnummer:</strong> <span data-bind="invoiceNumber">R-2025-0001</span><br>
+                  <strong>Rechnungsdatum:</strong> <span data-bind="invoiceDate">15. Januar 2025</span><br>
+                  <strong>Leistungszeitraum:</strong> Januar 2025<br>
+                  <strong>Fälligkeitsdatum:</strong> <span data-bind="dueDate">14. Februar 2025</span><br>
+                  <strong>Zahlungsziel:</strong> 30 Tage netto
+                </div>
+              </div>
+            </section>
+            
+            <!-- Customer Information -->
+            <section class="customer-section">
+              <div class="customer-title">Rechnungsempfänger</div>
+              <div class="customer-address" data-bind="customerInfo">
+                <span data-bind="customerName">[Kundenname]</span><br>
+                <span data-bind="customerAddress">[Strasse und Hausnummer]<br>
+[PLZ und Ort]<br>
+[Land]</span>
+              </div>
+              <div class="vat-number-line">
+                MWST-Nummer des Kunden: <span class="vat-blank"></span>
+              </div>
+            </section>
+            
+            <!-- Items Table -->
+            <section class="invoice-items">
+              <table class="items-table">
+                <thead>
+                  <tr>
+                    <th style="width: 50%;">Beschreibung</th>
+                    <th style="width: 10%;">Menge</th>
+                    <th style="width: 20%;">Einzelpreis</th>
+                    <th style="width: 20%;">Gesamtpreis</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>
+                      <strong>Premium Event-Webseite</strong>
+                      <div class="item-description">
+                        Professionelle Event-Webseite mit responsivem Design, SEO-Optimierung, 
+                        Ticketing-Integration, Sponsorenbereich, Social Media Integration und 
+                        SSL-Zertifikat inkl. Hosting für 1 Jahr. Launch innerhalb von 7 Tagen.
+                      </div>
+                    </td>
+                    <td>1</td>
+                    <td>CHF 3'790.00</td>
+                    <td>CHF 3'790.00</td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <strong>Interaktive Veranstaltungskarte</strong>
+                      <div class="item-description">
+                        Detaillierte Karte mit allen Eventlocations, Parkplätzen, 
+                        Gastronomie und Points of Interest inkl. Routenplaner.
+                      </div>
+                    </td>
+                    <td>1</td>
+                    <td>CHF 845.00</td>
+                    <td>CHF 845.00</td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <strong>Express-Bearbeitung (5 Tage)</strong>
+                      <div class="item-description">
+                        Beschleunigter Launch der Event-Webseite innerhalb von 5 statt 7 Werktagen.
+                      </div>
+                    </td>
+                    <td>1</td>
+                    <td>CHF 500.00</td>
+                    <td>CHF 500.00</td>
+                  </tr>
+                </tbody>
+              </table>
+            </section>
+            
+            <!-- Bottom Section with Side-by-Side Cards -->
+            <div class="bottom-section">
+              <!-- Cards Row - Payment and Total Side by Side -->
+              <div class="cards-row">
+                <!-- Payment Information -->
+                <section class="payment-section">
+                  <div class="payment-title">Zahlungsinformationen</div>
+                  <div class="payment-info">
+                    <div class="payment-detail">
+                      <div class="payment-label">Bank</div>
+                      <div class="payment-value">PostFinance AG</div>
+                    </div>
+                    <div class="payment-detail">
+                      <div class="payment-label">IBAN</div>
+                      <div class="payment-value">CH41 0900 0000 1234 5678 9</div>
+                    </div>
+                    <div class="payment-detail">
+                      <div class="payment-label">BIC/SWIFT</div>
+                      <div class="payment-value">POFICHBEXXX</div>
+                    </div>
+                    <div class="payment-detail">
+                      <div class="payment-label">Verwendungszweck</div>
+                      <div class="payment-value" data-bind="invoiceNumber">R-2025-0001</div>
+                    </div>
+                  </div>
+                </section>
+                
+                <!-- Total Amount Box with VAT Note Inside -->
+                <section class="total-section">
+                  <div class="total-row total">
+                    <span class="total-label">Gesamtbetrag:</span>
+                    <span class="total-amount">CHF 5'135.00</span>
+                  </div>
+                  
+                  <!-- VAT Note Inside Total Card -->
+                  <div class="tax-footnote">
+                    Kein Ausweis der MwSt. gemäss Bezugssteuer
+                  </div>
+                </section>
+              </div>
+            </div>
+            
+            <!-- Hinweise Section -->
+            <section class="notes-section">
+              <div class="notes-title">Hinweise</div>
+              <div class="notes-text">
+                Vielen Dank für Ihr Vertrauen in Eventseiten.ch. Bei Fragen zu dieser Rechnung 
+                kontaktieren Sie uns gerne unter support@eventseiten.ch oder +43 677 62031215.<br><br>
+                
+                <strong>Wichtiger Hinweis zur MwSt.:</strong> Als US-amerikanisches Unternehmen ohne 
+                Niederlassung in der Schweiz unterliegen unsere Dienstleistungen der Steuerschuldnerschaft des Leistungsempfängers (Bezugssteuer). 
+                Schweizer Unternehmen sind verpflichtet, die Mehrwertsteuer als Bezugssteuer selbst abzuführen.
+              </div>
+            </section>
+          </main>
+          
+          <footer class="invoice-footer">
+            <div class="footer-company">© 2025 ELK Media L.L.C. | Eventseiten.ch</div>
+            <div class="footer-contact">
+              <div class="contact-item">
+                <svg xmlns="http://www.w3.org/2000/svg" width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                  <polyline points="22,6 12,13 2,6"></polyline>
+                </svg>
+                support@eventseiten.ch
+              </div>
+              <div class="contact-item">
+                <svg xmlns="http://www.w3.org/2000/svg" width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                </svg>
+                +43 677 62031215
+              </div>
+            </div>
+          </footer>
+        </div>
+      </div>
+      
+      <!-- Figma-Style Floating Dock -->
+      <div class="figma-bottom-bar">
+        <!-- Zoom Controls Group -->
+        <div class="zoom-controls-group">
+          <button class="zoom-control-btn" id="zoom-out" title="Zoom Out">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="8" y1="12" x2="16" y2="12"></line>
+            </svg>
+          </button>
+          <div class="zoom-divider"></div>
+          <button class="zoom-percentage" id="zoom-percentage" title="Current Zoom. Click to toggle previous zoom.">100%</button>
+          <div class="zoom-divider"></div>
+          <button class="zoom-control-btn" id="zoom-in" title="Zoom In">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="8" x2="12" y2="16"></line>
+              <line x1="8" y1="12" x2="16" y2="12"></line>
+            </svg>
+          </button>
+        </div>
+        
+        <div class="dock-divider"></div>
+        
+        <button class="zoom-action-btn" id="fit-to-screen" title="Fit Page to Viewport">Fit to Screen</button>
+        <button class="zoom-action-btn" id="actual-size" title="Reset Zoom to 100%">Actual Size</button>
+        
+        <div class="dock-divider"></div>
+        
+        <!-- Add Item Button - Floating -->
+        <div class="add-item-group">
+          <button class="add-item-btn" id="add-item-bottom" title="Add Invoice Position">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+          </button>
+        </div>
+        
+        <div class="dock-divider"></div>
+        
+        <!-- Help Button -->
+        <div class="help-group">
+          <button class="help-btn" id="help-btn" title="Keyboard Shortcuts & Navigation Help">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+              <line x1="12" y1="17" x2="12.01" y2="17"></line>
+            </svg>
+          </button>
+          
+          <button class="help-btn" id="print-btn" title="Print Invoice">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 6 2 18 2 18 9"></polyline>
+              <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+              <rect x="6" y="14" width="12" height="8"></rect>
+            </svg>
+          </button>
+        </div>
+      </div>
+      
+      <!-- Help Overlay -->
+      <div class="help-overlay" id="help-overlay">
+        <div class="help-panel">
+          <div class="help-header">
+            <h3>
+              <div class="brand-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                  <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                </svg>
+              </div>
+              Navigation & Shortcuts - Eventseiten.ch
+            </h3>
+            <button class="help-close" id="help-close" title="Close Help">×</button>
+          </div>
+          <div class="help-content">
+            <div class="help-section">
+              <h4><span class="emoji">🔍</span>Zoomen</h4>
+              <div class="help-shortcut">
+                <span class="help-shortcut-desc">Zoomen am Mauszeiger</span>
+                <div class="help-shortcut-keys">
+                  <kbd class="help-key modifier">Strg</kbd>
+                  <span class="help-plus">+</span>
+                  <kbd class="help-key">Scroll</kbd>
+                </div>
+              </div>
+              <div class="help-shortcut">
+                <span class="help-shortcut-desc">Hineinzoomen</span>
+                <div class="help-shortcut-keys">
+                  <kbd class="help-key modifier">Strg</kbd>
+                  <span class="help-plus">+</span>
+                  <kbd class="help-key">+</kbd>
+                </div>
+              </div>
+              <div class="help-shortcut">
+                <span class="help-shortcut-desc">Herauszoomen</span>
+                <div class="help-shortcut-keys">
+                  <kbd class="help-key modifier">Strg</kbd>
+                  <span class="help-plus">+</span>
+                  <kbd class="help-key">-</kbd>
+                </div>
+              </div>
+              <div class="help-shortcut">
+                <span class="help-shortcut-desc">An Bildschirm anpassen</span>
+                <div class="help-shortcut-keys">
+                  <kbd class="help-key modifier">Strg</kbd>
+                  <span class="help-plus">+</span>
+                  <kbd class="help-key">2</kbd>
+                </div>
+              </div>
+              <div class="help-shortcut">
+                <span class="help-shortcut-desc">Originalgrösse (100%)</span>
+                <div class="help-shortcut-keys">
+                  <kbd class="help-key modifier">Strg</kbd>
+                  <span class="help-plus">+</span>
+                  <kbd class="help-key">1</kbd>
+                </div>
+              </div>
+            </div>
+            
+            <div class="help-section">
+              <h4><span class="emoji">✋</span>Verschieben</h4>
+              <div class="help-shortcut">
+                <span class="help-shortcut-desc">Temporärer Verschiebe-Modus</span>
+                <div class="help-shortcut-keys">
+                  <kbd class="help-key">Leertaste</kbd>
+                  <span class="help-plus">+</span>
+                  <kbd class="help-key">Ziehen</kbd>
+                </div>
+              </div>
+              <div class="help-shortcut">
+                <span class="help-shortcut-desc">Hand-Werkzeug</span>
+                <div class="help-shortcut-keys">
+                  <kbd class="help-key">H</kbd>
+                </div>
+              </div>
+              <div class="help-shortcut">
+                <span class="help-shortcut-desc">Trackpad verschieben</span>
+                <div class="help-shortcut-keys">
+                  <kbd class="help-key">Zwei Finger</kbd>
+                  <span class="help-plus">+</span>
+                  <kbd class="help-key">Wischen</kbd>
+                </div>
+              </div>
+            </div>
+            
+            <div class="help-section">
+              <h4><span class="emoji">🛠️</span>Werkzeuge</h4>
+              <div class="help-shortcut">
+                <span class="help-shortcut-desc">Zoom-Werkzeug</span>
+                <div class="help-shortcut-keys">
+                  <kbd class="help-key">Z</kbd>
+                </div>
+              </div>
+              <div class="help-shortcut">
+                <span class="help-shortcut-desc">Zoom-Stufe umschalten</span>
+                <div class="help-shortcut-keys">
+                  <kbd class="help-key">% klicken</kbd>
+                </div>
+              </div>
+            </div>
+            
+            <div class="help-section">
+              <h4><span class="emoji">📝</span>Bearbeitung</h4>
+              <div class="help-shortcut">
+                <span class="help-shortcut-desc">Position hinzufügen</span>
+                <div class="help-shortcut-keys">
+                  <kbd class="help-key modifier">Strg</kbd>
+                  <span class="help-plus">+</span>
+                  <kbd class="help-key">L</kbd>
+                </div>
+              </div>
+              <div class="help-shortcut">
+                <span class="help-shortcut-desc">Rechnung drucken</span>
+                <div class="help-shortcut-keys">
+                  <kbd class="help-key modifier">Strg</kbd>
+                  <span class="help-plus">+</span>
+                  <kbd class="help-key">P</kbd>
+                </div>
+              </div>
+              <div class="help-shortcut">
+                <span class="help-shortcut-desc">Hilfe schliessen</span>
+                <div class="help-shortcut-keys">
+                  <kbd class="help-key">Esc</kbd>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<button class="print-button" onclick="window.print()">
+  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <polyline points="6 9 6 2 18 2 18 9"></polyline>
+    <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+    <rect x="6" y="14" width="12" height="8"></rect>
+  </svg>
+</button>
+
+<script>
+  // ===== ENTERPRISE INVOICE EDITOR SYSTEM =====
+  
+  // Payment Profiles System
+  const paymentProfiles = {
+    wise: {
+      name: "Wise (Standard)",
+      bank: "TransferWise Europe SA",
+      iban: "BE13 9672 2117 7039",
+      swift: "TRWIBEB1XXX",
+      accountHolder: "ELK Media LLC",
+      address: "Rue du Trône 100, 3rd floor\nBrussels, 1050, Belgium"
+    }
+  };
+
+  // Default Invoice Items
+  const defaultInvoiceItems = [
+    {
+      id: 1,
+      name: "Premium Event-Webseite",
+      description: "Professionelle Event-Webseite mit responsivem Design, SEO-Optimierung, Ticketing-Integration, Sponsorenbereich, Social Media Integration und SSL-Zertifikat inkl. Hosting für 1 Jahr. Launch innerhalb von 7 Tagen.",
+      quantity: 1,
+      price: 3790.00
+    },
+    {
+      id: 2,
+      name: "Interaktive Veranstaltungskarte",
+      description: "Detaillierte Karte mit allen Eventlocations, Parkplätzen, Gastronomie und Points of Interest inkl. Routenplaner.",
+      quantity: 1,
+      price: 845.00
+    },
+    {
+      id: 3,
+      name: "Express-Bearbeitung (5 Tage)",
+      description: "Beschleunigter Launch der Event-Webseite innerhalb von 5 statt 7 Werktagen.",
+      quantity: 1,
+      price: 500.00
+    }
+  ];
+
+  // ==== PASSWORD SECTION START ====
+  const validPasswords = {
+    "customeraut@gmail.com": "Asilah12!",
+    "laura.rzoska@gmail.com": "Laura12!",
+    "Ingrid.el.kanfoud@gmail.com": "Ingrid12!",
+    "sinisapaler@gmail.com": "Sinisa12!",
+    "1212": "1212",
+  };
+  // ==== PASSWORD SECTION END ====
+
+  document.addEventListener('DOMContentLoaded', function() {
+    const preloader = document.getElementById('preloader');
+    const splash = document.getElementById('splash');
+    const auth = document.getElementById('auth');
+    const authForm = document.getElementById('authForm');
+    const authError = document.getElementById('authError');
+    const authErrorText = document.getElementById('authErrorText');
+    const usernameInput = document.getElementById('username');
+    const passwordInput = document.getElementById('password');
+    const authSubmit = document.getElementById('authSubmit');
+    const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
+    const editor = document.getElementById('editor');
+    const artboardContainer = document.querySelector('.artboard-container');
+    const artboardCanvas = document.querySelector('.artboard-canvas');
+    const zoomInBtn = document.getElementById('zoom-in');
+    const zoomOutBtn = document.getElementById('zoom-out');
+    const zoomLabel = document.getElementById('zoom-percentage');
+    const fitToScreenBtn = document.getElementById('fit-to-screen');
+    const actualSizeBtn = document.getElementById('actual-size');
+    const addItemBottomBtn = document.getElementById('add-item-bottom');
+    const helpBtn = document.getElementById('help-btn');
+    const helpOverlay = document.getElementById('help-overlay');
+    const helpClose = document.getElementById('help-close');
+    const printBtn = document.getElementById('print-btn');
+    const resetAllBtn = document.getElementById('reset-all-btn');
+    const resetModal = document.getElementById('reset-modal');
+    const resetCancel = document.getElementById('reset-cancel');
+    const resetConfirm = document.getElementById('reset-confirm');
+    const helpHeaderBtn = document.getElementById('help-header-btn');
+
+    // Authentication persistence functions
+    function setAuthentication(username) {
+      const authData = {
+        authenticated: true,
+        username: username,
+        timestamp: Date.now(),
+        expires: Date.now() + (7 * 24 * 60 * 60 * 1000) // 7 days
+      };
+      localStorage.setItem('eventseiten_auth', JSON.stringify(authData));
+    }
+
+    function checkAuthentication() {
+      try {
+        const authData = JSON.parse(localStorage.getItem('eventseiten_auth'));
+        if (!authData) return false;
+        
+        if (Date.now() > authData.expires) {
+          localStorage.removeItem('eventseiten_auth');
+          return false;
+        }
+        
+        return authData.authenticated === true;
+      } catch (e) {
+        localStorage.removeItem('eventseiten_auth');
+        return false;
+      }
+    }
+
+    function clearAuthentication() {
+      localStorage.removeItem('eventseiten_auth');
+    }
+
+    // Check if user is already authenticated
+    const isAuthenticated = checkAuthentication();
+    
+    if (isAuthenticated) {
+      setTimeout(() => {
+        hidePreloader();
+      }, 500);
+    } else {
+      setTimeout(() => {
+        showPasswordScreen();
+      }, 2500);
+    }
+
+    function showPasswordScreen() {
+      splash.classList.add('fade-out');
+      
+      setTimeout(() => {
+        splash.style.display = 'none';
+        auth.classList.add('active');
+        setTimeout(() => {
+          usernameInput.focus();
+        }, 300);
+      }, 600);
+    }
+
+    function hidePreloader() {
+      preloader.classList.add('hidden');
+      
+      setTimeout(() => {
+        preloader.style.display = 'none';
+      }, 800);
+    }
+
+    function showError(message) {
+      authErrorText.textContent = message;
+      authError.classList.add('show');
+      
+      usernameInput.classList.add('error');
+      passwordInput.classList.add('error');
+      
+      setTimeout(() => {
+        usernameInput.classList.remove('error');
+        passwordInput.classList.remove('error');
+      }, 400);
+      
+      setTimeout(() => {
+        hideError();
+      }, 5000);
+    }
+
+    function hideError() {
+      authError.classList.remove('show');
+    }
+
+    function validateCredentials(username, password) {
+      const normalizedUsername = username.toLowerCase().trim();
+      
+      for (const [validUser, validPass] of Object.entries(validPasswords)) {
+        if (validUser.toLowerCase() === normalizedUsername && validPass === password) {
+          return true;
+        }
+      }
+      return false;
+    }
+
+    // Form submission handler
+    if (authForm) {
+      authForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        hideError();
+        
+        const username = usernameInput.value.trim();
+        const password = passwordInput.value;
+        
+        if (!username || !password) {
+          showError('Bitte füllen Sie alle Felder aus.');
+          return;
+        }
+        
+        authSubmit.disabled = true;
+        authSubmit.textContent = 'Validierung...';
+        
+        setTimeout(() => {
+          if (validateCredentials(username, password)) {
+            authSubmit.textContent = 'Erfolgreich!';
+            authSubmit.style.background = 'linear-gradient(135deg, var(--primary-deep) 0%, var(--primary-dark) 100%)';
+            authSubmit.style.boxShadow = '0 4px 20px rgba(196, 27, 21, 0.4), 0 2px 8px rgba(196, 27, 21, 0.3)';
+            
+            setAuthentication(username);
+            
+            setTimeout(() => {
+              hidePreloader();
+            }, 1000);
+          } else {
+            showError('Ungültige Anmeldedaten. Bitte versuchen Sie es erneut.');
+            authSubmit.disabled = false;
+            authSubmit.textContent = 'Anmelden';
+            
+            passwordInput.value = '';
+            passwordInput.focus();
+          }
+        }, 800);
+      });
+    }
+
+    // Clear error when user starts typing
+    [usernameInput, passwordInput].forEach(input => {
+      if (input) {
+        input.addEventListener('input', hideError);
+      }
+    });
+
+    // Mobile Menu Toggle Functionality
+    if (mobileMenuToggle && editor) {
+      mobileMenuToggle.addEventListener('click', function() {
+        const isCurrentlyOpen = editor.classList.contains('open');
+        
+        if (isCurrentlyOpen) {
+          this.classList.add('closing');
+          this.classList.remove('active');
+          
+          setTimeout(() => {
+            editor.classList.remove('open');
+            this.classList.remove('closing');
+            this.setAttribute('aria-label', 'Einstellungen öffnen');
+          }, 600);
+        } else {
+          editor.classList.add('open');
+          this.classList.add('active');
+          this.setAttribute('aria-label', 'Einstellungen schließen');
+        }
+      });
+      
+      // Close mobile menu when clicking outside
+      document.addEventListener('click', function(e) {
+        if (!editor.contains(e.target) && !mobileMenuToggle.contains(e.target)) {
+          if (editor.classList.contains('open')) {
+            mobileMenuToggle.classList.add('closing');
+            mobileMenuToggle.classList.remove('active');
+            
+            setTimeout(() => {
+              editor.classList.remove('open');
+              mobileMenuToggle.classList.remove('closing');
+              mobileMenuToggle.setAttribute('aria-label', 'Einstellungen öffnen');
+            }, 600);
+          }
+        }
+      });
+    }
+
+    // ===== INVOICE EDITING SYSTEM =====
+    
+    let invoiceItems = [...defaultInvoiceItems];
+    let itemIdCounter = defaultInvoiceItems.length;
+    
+    // Basic fields for live binding
+    const basicFields = ['invoiceNumber', 'customerName'];
+    let saveTimeout;
+
+    // Date formatting function
+    function formatDate(dateString) {
+      if (!dateString) return '';
+      const date = new Date(dateString);
+      return date.toLocaleDateString('de-DE', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric'
+      });
+    }
+
+    // Initialize live binding for basic fields
+    basicFields.forEach(fieldName => {
+      const input = document.querySelector(`[name="${fieldName}"]`);
+      const targets = document.querySelectorAll(`[data-bind="${fieldName}"]`);
+      
+      if (input && targets.length > 0) {
+        input.addEventListener('input', e => {
+          const value = e.target.value || input.placeholder || targets[0].textContent;
+          
+          targets.forEach(target => {
+            target.textContent = value;
+          });
+          
+          clearTimeout(saveTimeout);
+          saveTimeout = setTimeout(save, 500);
+        });
+      }
+    });
+
+    // Special handling for date fields
+    const dateFields = ['invoiceDate', 'dueDate'];
+    dateFields.forEach(fieldName => {
+      const input = document.querySelector(`[name="${fieldName}"]`);
+      const targets = document.querySelectorAll(`[data-bind="${fieldName}"]`);
+      
+      if (input && targets.length > 0) {
+        input.addEventListener('input', e => {
+          const formattedDate = formatDate(e.target.value);
+          
+          targets.forEach(target => {
+            target.textContent = formattedDate;
+          });
+          
+          clearTimeout(saveTimeout);
+          saveTimeout = setTimeout(save, 500);
+        });
+      }
+    });
+
+    // Customer address handling
+    const customerAddressInput = document.querySelector('[name="customerAddress"]');
+    const customerAddressTarget = document.querySelector('[data-bind="customerAddress"]');
+    
+    if (customerAddressInput && customerAddressTarget) {
+      customerAddressInput.addEventListener('input', e => {
+        customerAddressTarget.innerHTML = e.target.value.replace(/\n/g, '<br>');
+        
+        clearTimeout(saveTimeout);
+        saveTimeout = setTimeout(save, 500);
+      });
+    }
+
+    // Invoice Items Management
+    function createInvoiceItemElement(item) {
+      const div = document.createElement('div');
+      div.className = 'invoice-item-form';
+      div.dataset.itemId = item.id;
+      
+      div.innerHTML = `
+        <div class="item-header">
+          <h5>Position ${item.id}</h5>
+          <button type="button" class="remove-item" data-item-id="${item.id}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+        
+        <div class="form-group">
+          <label>Bezeichnung</label>
+          <input type="text" name="itemName" value="${item.name}" data-item-id="${item.id}">
+        </div>
+        
+        <div class="form-group">
+          <label>Beschreibung</label>
+          <textarea name="itemDescription" rows="2" data-item-id="${item.id}">${item.description}</textarea>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label>Menge</label>
+            <input type="number" name="itemQuantity" value="${item.quantity}" min="1" data-item-id="${item.id}">
+          </div>
+          
+          <div class="form-group">
+            <label>Einzelpreis (CHF)</label>
+            <input type="number" name="itemPrice" value="${item.price}" step="0.01" min="0" data-item-id="${item.id}">
+          </div>
+        </div>
+      `;
+      
+      return div;
+    }
+
+    function renderInvoiceItems() {
+      const container = document.getElementById('invoice-items');
+      container.innerHTML = '';
+      
+      invoiceItems.forEach(item => {
+        const element = createInvoiceItemElement(item);
+        container.appendChild(element);
+      });
+
+      // Add event listeners for item forms
+      container.querySelectorAll('[data-item-id]').forEach(input => {
+        input.addEventListener('input', updateInvoiceItem);
+      });
+
+      container.querySelectorAll('.remove-item').forEach(button => {
+        button.addEventListener('click', removeInvoiceItem);
+      });
+
+      updateInvoiceTable();
+    }
+
+    function updateInvoiceItem(e) {
+      const itemId = parseInt(e.target.dataset.itemId);
+      const item = invoiceItems.find(item => item.id === itemId);
+      
+      if (!item) return;
+
+      const fieldName = e.target.name;
+      const value = e.target.value;
+
+      switch (fieldName) {
+        case 'itemName':
+          item.name = value;
+          break;
+        case 'itemDescription':
+          item.description = value;
+          break;
+        case 'itemQuantity':
+          item.quantity = parseInt(value) || 1;
+          break;
+        case 'itemPrice':
+          item.price = parseFloat(value) || 0;
+          break;
+      }
+
+      updateInvoiceTable();
+      
+      clearTimeout(saveTimeout);
+      saveTimeout = setTimeout(save, 500);
+    }
+
+    function removeInvoiceItem(e) {
+      const itemId = parseInt(e.target.dataset.itemId);
+      invoiceItems = invoiceItems.filter(item => item.id !== itemId);
+      renderInvoiceItems();
+      
+      clearTimeout(saveTimeout);
+      saveTimeout = setTimeout(save, 500);
+    }
+
+    function addInvoiceItem() {
+      itemIdCounter++;
+      const newItem = {
+        id: itemIdCounter,
+        name: `Neue Position ${itemIdCounter}`,
+        description: 'Beschreibung der Leistung',
+        quantity: 1,
+        price: 0.00
+      };
+      
+      invoiceItems.push(newItem);
+      renderInvoiceItems();
+      
+      // Focus on the new item's name field
+      setTimeout(() => {
+        const newItemElement = document.querySelector(`[data-item-id="${itemIdCounter}"][name="itemName"]`);
+        if (newItemElement) {
+          newItemElement.focus();
+          newItemElement.select();
+        }
+      }, 100);
+    }
+
+    function updateInvoiceTable() {
+      const tableBody = document.querySelector('.items-table tbody');
+      if (!tableBody) return;
+
+      tableBody.innerHTML = '';
+      let total = 0;
+
+      invoiceItems.forEach(item => {
+        const itemTotal = item.quantity * item.price;
+        total += itemTotal;
+
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>
+            <strong>${item.name}</strong>
+            <div class="item-description">
+              ${item.description}
+            </div>
+          </td>
+          <td>${item.quantity}</td>
+          <td>CHF ${item.price.toLocaleString('de-CH', { minimumFractionDigits: 2 })}</td>
+          <td>CHF ${itemTotal.toLocaleString('de-CH', { minimumFractionDigits: 2 })}</td>
+        `;
+        
+        tableBody.appendChild(row);
+      });
+
+      // Update total amount
+      const totalAmountElement = document.querySelector('.total-amount');
+      if (totalAmountElement) {
+        totalAmountElement.textContent = `CHF ${total.toLocaleString('de-CH', { minimumFractionDigits: 2 })}`;
+      }
+    }
+
+    // Add item button
+    const addItemButton = document.getElementById('add-item');
+    if (addItemButton) {
+      addItemButton.addEventListener('click', addInvoiceItem);
+    }
+
+    // Payment Profile Management
+    function updatePaymentProfile(profileKey) {
+      const profile = paymentProfiles[profileKey];
+      if (!profile) return;
+
+      const paymentDetails = document.querySelectorAll('.payment-detail');
+      
+      paymentDetails.forEach(detail => {
+        const label = detail.querySelector('.payment-label').textContent.toLowerCase();
+        const valueElement = detail.querySelector('.payment-value');
+        
+        if (label.includes('bank')) {
+          valueElement.textContent = profile.bank;
+        } else if (label.includes('iban')) {
+          valueElement.textContent = profile.iban;
+        } else if (label.includes('swift') || label.includes('bic')) {
+          valueElement.textContent = profile.swift;
+        }
+      });
+    }
+
+    // Payment profile selector
+    const paymentProfileSelect = document.getElementById('payment-profile');
+    if (paymentProfileSelect) {
+      paymentProfileSelect.addEventListener('change', e => {
+        updatePaymentProfile(e.target.value);
+        
+        clearTimeout(saveTimeout);
+        saveTimeout = setTimeout(save, 500);
+      });
+    }
+
+    // Storage functions
+    function save() {
+      const formData = new FormData(document.getElementById('invoiceForm'));
+      const data = {};
+      
+      for (let [key, value] of formData.entries()) {
+        data[key] = value;
+      }
+      
+      data.invoiceItems = invoiceItems;
+      data.timestamp = Date.now();
+      
+      localStorage.setItem('invoiceData', JSON.stringify(data));
+    }
+
+    function load() {
+      const saved = localStorage.getItem('invoiceData');
+      if (saved) {
+        try {
+          const data = JSON.parse(saved);
+          
+          // Load basic form fields
+          Object.keys(data).forEach(key => {
+            if (key === 'invoiceItems' || key === 'timestamp') return;
+            
+            const input = document.querySelector(`[name="${key}"]`);
+            if (input && data[key]) {
+              input.value = data[key];
+              
+              // Trigger update for bound elements
+              const event = new Event('input', { bubbles: true });
+              input.dispatchEvent(event);
+            }
+          });
+
+          // Load invoice items
+          if (data.invoiceItems && data.invoiceItems.length > 0) {
+            invoiceItems = data.invoiceItems;
+            itemIdCounter = Math.max(...invoiceItems.map(item => item.id));
+          }
+
+          // Update payment profile
+          if (data.paymentProfile) {
+            updatePaymentProfile(data.paymentProfile);
+          }
+
+          renderInvoiceItems();
+          
+        } catch (e) {
+          console.warn('Error loading saved data:', e);
+        }
+      } else {
+        // Initialize with default items if no saved data
+        renderInvoiceItems();
+      }
+    }
+
+    // Reset functionality
+    document.getElementById('reset').addEventListener('click', () => {
+      if (confirm('Alle Felder auf Standardwerte zurücksetzen?')) {
+        localStorage.removeItem('invoiceData');
+        
+        // Reset form
+        document.getElementById('invoiceForm').reset();
+        
+        // Reset items to defaults
+        invoiceItems = [...defaultInvoiceItems];
+        itemIdCounter = defaultInvoiceItems.length;
+        
+        // Reset date fields to defaults
+        document.querySelector('[name="invoiceDate"]').value = '2025-01-15';
+        document.querySelector('[name="dueDate"]').value = '2025-02-14';
+        
+        // Update display
+        setTimeout(() => {
+          renderInvoiceItems();
+          updatePaymentProfile('wise');
+          
+          // Trigger updates for bound elements
+          document.querySelectorAll('[data-bind]').forEach(element => {
+            const fieldName = element.dataset.bind;
+            const input = document.querySelector(`[name="${fieldName}"]`);
+            if (input) {
+              const event = new Event('input', { bubbles: true });
+              input.dispatchEvent(event);
+            }
+          });
+        }, 100);
+      }
+    });
+
+    // Download button with enterprise animation
+    document.getElementById('download').addEventListener('click', function(e) {
+      e.preventDefault();
+      const button = this;
+      
+      if (button.classList.contains('processing') || 
+          button.classList.contains('success') ||
+          button.classList.contains('complete')) {
+        return;
+      }
+      
+      button.classList.add('processing');
+      
+      setTimeout(() => {
+        button.classList.remove('processing');
+        button.classList.add('success');
+        
+        setTimeout(() => {
+          window.print();
+          
+          button.classList.remove('success');
+          button.classList.add('complete');
+          
+          setTimeout(() => {
+            button.classList.remove('complete');
+          }, 800);
+          
+        }, 1200);
+        
+      }, 2000);
+    });
+
+    // Initialize the invoice editor
+    setTimeout(() => {
+      load();
+      updatePaymentProfile('wise');
+    }, 100);
+
+    // Auto-logout after inactivity (2 hours)
+    let inactivityTimer;
+    function resetInactivityTimer() {
+      clearTimeout(inactivityTimer);
+      inactivityTimer = setTimeout(() => {
+        clearAuthentication();
+        location.reload();
+      }, 2 * 60 * 60 * 1000);
+    }
+
+    ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart'].forEach(event => {
+      document.addEventListener(event, resetInactivityTimer, true);
+    });
+    
+    resetInactivityTimer();
+
+    // ===== ARTBOARD SYSTEM =====
+    
+    // ===== PRODUCTION-READY ZOOM SYSTEM =====
+    let currentZoom = 100; // Current zoom percentage
+    const minZoom = 10;
+    const maxZoom = 200;
+    // Figma-style zoom levels
+    const zoomLevels = [10, 15, 20, 25, 30, 40, 50, 60, 70, 80, 90, 100, 125, 150, 200];
+    
+    // Page dimensions at 100% (A4 at 96 DPI)
+    const pageWidth = 794;
+    const pageHeight = 1123;
+    
+    // Viewport and transform state
+    let viewportX = 0; // Viewport center X offset
+    let viewportY = 0; // Viewport center Y offset
+    let lastZoom = 100; // For toggle functionality
+    
+    // Legacy variables for compatibility with duplicate functions
+    let currentScale = 1.0;
+    let currentTranslateX = 0;
+    let currentTranslateY = 0;
+    
+    // Get container center point
+    function getContainerCenter() {
+      const rect = artboardContainer.getBoundingClientRect();
+      return {
+        x: rect.width / 2,
+        y: rect.height / 2
+      };
+    }
+    
+    // Apply transform to canvas with proper centering
+    function updateCanvasTransform() {
+      const scale = currentZoom / 100;
+      
+      // Always use center-center origin for consistent behavior
+      artboardCanvas.style.transformOrigin = 'center center';
+      
+      // Apply scale and translate together
+      if (viewportX === 0 && viewportY === 0) {
+        // Pure scale when centered
+        artboardCanvas.style.transform = `scale(${scale})`;
+      } else {
+        // Scale with translate offset
+        artboardCanvas.style.transform = `translate(${viewportX}px, ${viewportY}px) scale(${scale})`;
+      }
+    }
+    
+    // Center the page in viewport
+    function centerPage() {
+      // Reset viewport offsets to center the page
+      viewportX = 0;
+      viewportY = 0;
+      updateCanvasTransform();
+    }
+    
+    // Production-ready zoom function with proper viewport management
+    function zoomTo(newZoom, mouseX = null, mouseY = null, shouldCenter = false) {
+      // Store last zoom for toggle
+      if (newZoom !== currentZoom) {
+        lastZoom = currentZoom;
+      }
+      
+      const oldZoom = currentZoom;
+      currentZoom = Math.max(minZoom, Math.min(maxZoom, newZoom));
+      
+      if (shouldCenter) {
+        // Explicitly center the page
+        centerPage();
+      } else if (mouseX !== null && mouseY !== null) {
+        // Zoom around mouse cursor - PROPER CALCULATION
+        const containerRect = artboardContainer.getBoundingClientRect();
+        const center = getContainerCenter();
+        
+        // Mouse position relative to container center
+        const mouseRelativeX = mouseX - containerRect.left - center.x;
+        const mouseRelativeY = mouseY - containerRect.top - center.y;
+        
+        // Calculate zoom factor change
+        const oldScale = oldZoom / 100;
+        const newScale = currentZoom / 100;
+        const scaleFactor = newScale / oldScale;
+        
+        // Adjust viewport to keep mouse point stationary
+        viewportX = mouseRelativeX + (viewportX - mouseRelativeX) * scaleFactor;
+        viewportY = mouseRelativeY + (viewportY - mouseRelativeY) * scaleFactor;
+        
+        updateCanvasTransform();
+      } else {
+        // Just update scale, keep viewport position
+        updateCanvasTransform();
+      }
+      
+      updateZoomDisplay();
+    }
+    
+    // Updated panning system
+    let isPanning = false;
+    let lastMouseX = 0;
+    let lastMouseY = 0;
+    let isSpacePressed = false;
+    
+    // Panning functionality
+    function startPan(x, y) {
+      isPanning = true;
+      lastMouseX = x;
+      lastMouseY = y;
+    }
+    
+    function updatePan(x, y) {
+      if (!isPanning) return;
+      
+      const deltaX = x - lastMouseX;
+      const deltaY = y - lastMouseY;
+      
+      viewportX += deltaX;
+      viewportY += deltaY;
+      
+      updateCanvasTransform();
+      
+      lastMouseX = x;
+      lastMouseY = y;
+    }
+    
+    function endPan() {
+      isPanning = false;
+    }
+    
+    // Update zoom display and buttons
+    function updateZoomDisplay() {
+      if (zoomLabel) {
+        // Always show clean rounded percentage
+        const roundedZoom = Math.round(currentZoom);
+        zoomLabel.textContent = `${roundedZoom}%`;
+      }
+      if (zoomInBtn) {
+        zoomInBtn.disabled = currentZoom >= maxZoom;
+      }
+      if (zoomOutBtn) {
+        zoomOutBtn.disabled = currentZoom <= minZoom;
+      }
+    }
+    
+    // Get next/previous zoom level
+    function getNextZoomLevel(current, direction) {
+      const currentIndex = zoomLevels.findIndex(level => level >= current);
+      if (direction > 0) {
+        // Zoom in
+        return currentIndex < zoomLevels.length - 1 ? zoomLevels[currentIndex + 1] : maxZoom;
+      } else {
+        // Zoom out
+        return currentIndex > 0 ? zoomLevels[currentIndex - 1] : minZoom;
+      }
+    }
+    
+    // Center the page in the viewport (only when explicitly requested)
+    function centerPage() {
+      // Reset viewport offsets to center the page
+      viewportX = 0;
+      viewportY = 0;
+      updateCanvasTransform();
+    }
+    
+    // Zoom button controls
+    if (zoomInBtn) {
+      zoomInBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const nextZoom = getNextZoomLevel(currentZoom, 1);
+        // Center zoom for button clicks
+        zoomTo(nextZoom, null, null, false);
+      });
+    }
+    
+    if (zoomOutBtn) {
+      zoomOutBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const nextZoom = getNextZoomLevel(currentZoom, -1);
+        // Center zoom for button clicks  
+        zoomTo(nextZoom, null, null, false);
+      });
+    }
+    
+    // Fit to screen functionality
+    if (fitToScreenBtn) {
+      fitToScreenBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const containerRect = artboardContainer.getBoundingClientRect();
+        const padding = 40; // Minimum padding around page
+        
+        const scaleX = (containerRect.width - padding) / pageWidth;
+        const scaleY = (containerRect.height - padding) / pageHeight;
+        
+        const optimalScale = Math.min(scaleX, scaleY);
+        const optimalZoom = Math.round(optimalScale * 100);
+        
+        // Find closest zoom level
+        const closestZoom = zoomLevels.reduce((prev, curr) => 
+          Math.abs(curr - optimalZoom) < Math.abs(prev - optimalZoom) ? curr : prev
+        );
+        
+        zoomTo(Math.max(minZoom, closestZoom), null, null, true);
+      });
+    }
+    
+    // Actual size functionality
+    if (actualSizeBtn) {
+      actualSizeBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        zoomTo(100, null, null, true);
+      });
+    }
+      
+      // Mouse move for panning
+      document.addEventListener('mousemove', (e) => {
+        if (isPanning && (isSpacePressed || isHandToolActive)) {
+          updatePan(e.clientX, e.clientY);
+          artboardContainer.classList.add('dragging');
+        }
+      });
+      
+      // Mouse up for panning
+      document.addEventListener('mouseup', () => {
+        if (isPanning) {
+          endPan();
+          artboardContainer.classList.remove('dragging');
+        }
+      });
+    
+    // Space key panning state
+    document.addEventListener('keydown', (e) => {
+      if (e.code === 'Space' && !isSpacePressed) {
+        e.preventDefault();
+        isSpacePressed = true;
+        artboardContainer.classList.add('space-panning');
+      }
+    });
+    
+    document.addEventListener('keyup', (e) => {
+      if (e.code === 'Space') {
+        isSpacePressed = false;
+        isPanning = false;
+        artboardContainer.classList.remove('space-panning', 'dragging');
+      }
+    });
+    
+    // Mouse down for panning
+    artboardContainer.addEventListener('mousedown', (e) => {
+      // Space key panning (temporary)
+      if (isSpacePressed) {
+        e.preventDefault();
+        startPan(e.clientX, e.clientY);
+        artboardContainer.classList.add('dragging');
+        return;
+      }
+      
+      // Hand tool panning (persistent)
+      if (isHandToolActive) {
+        e.preventDefault();
+        startPan(e.clientX, e.clientY);
+        artboardContainer.classList.add('dragging');
+        return;
+      }
+      
+      // Zoom tool
+      if (isZoomToolActive) {
+        e.preventDefault();
+        if (e.altKey) {
+          // Alt + click = zoom out
+          const nextZoom = getNextZoomLevel(currentZoom, -1);
+          zoomTo(nextZoom, e.clientX, e.clientY);
+        } else {
+          // Click = zoom in
+          const nextZoom = getNextZoomLevel(currentZoom, 1);
+          zoomTo(nextZoom, e.clientX, e.clientY);
+        }
+        return;
+      }
+    });
+    
+    // Wheel events for zoom and touchpad pan
+    artboardContainer.addEventListener('wheel', (e) => {
+      e.preventDefault();
+      
+      if (e.ctrlKey || e.metaKey) {
+        // Ctrl/Cmd + wheel = zoom - PRODUCTION READY
+        const zoomSensitivity = 0.2;
+        const deltaY = e.deltaY;
+        
+        // Calculate zoom change
+        let zoomChange;
+        if (Math.abs(deltaY) > 100) {
+          // Mouse wheel - discrete steps
+          zoomChange = deltaY > 0 ? -10 : 10;
+        } else {
+          // Trackpad - smooth zoom
+          zoomChange = -deltaY * zoomSensitivity;
+        }
+        
+        const newZoom = Math.max(minZoom, Math.min(maxZoom, currentZoom + zoomChange));
+        
+        // Only update if significant change
+        if (Math.abs(newZoom - currentZoom) > 0.1) {
+          zoomTo(newZoom, e.clientX, e.clientY);
+        }
+      } else {
+        // Regular wheel = trackpad pan
+        viewportX -= e.deltaX;
+        viewportY -= e.deltaY;
+        updateCanvasTransform();
+      }
+    });
+    
+    // Prevent default space bar scrolling
+    window.addEventListener('keydown', (e) => {
+      if (e.code === 'Space') {
+        e.preventDefault();
+      }
+    });
+    
+    // Initialize artboard
+    function initializeArtboard() {
+      currentZoom = 80; // Changed from 100 to 80 for better initial view
+      // Delay centering to ensure proper layout calculations
+      setTimeout(() => {
+      centerPage();
+      updateZoomDisplay();
+      }, 100);
+    }
+    
+    // Reinitialize on window resize
+    window.addEventListener('resize', () => {
+      setTimeout(() => {
+        centerPage();
+      }, 100);
+    });
+    
+    // Initialize artboard and bottom bar functionality
+    initializeArtboard();
+    
+    // Zoom percentage toggle
+    if (zoomLabel) {
+      zoomLabel.addEventListener('click', () => {
+        zoomTo(lastZoom);
+      });
+    }
+    
+    // Add item button (bottom bar)
+    if (addItemBottomBtn) {
+      addItemBottomBtn.addEventListener('click', addInvoiceItem);
+    }
+    
+    // Print button (bottom bar)
+    if (printBtn) {
+      printBtn.addEventListener('click', () => {
+        window.print();
+      });
+    }
+    
+    // Help overlay functionality
+    if (helpBtn && helpOverlay && helpClose) {
+      helpBtn.addEventListener('click', () => {
+        helpOverlay.classList.add('active');
+      });
+      
+      helpClose.addEventListener('click', () => {
+        helpOverlay.classList.remove('active');
+      });
+      
+      // Close on overlay click
+      helpOverlay.addEventListener('click', (e) => {
+        if (e.target === helpOverlay) {
+          helpOverlay.classList.remove('active');
+        }
+      });
+      
+      // Close on Escape key
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && helpOverlay.classList.contains('active')) {
+          helpOverlay.classList.remove('active');
+        }
+      });
+    }
+    
+    // Header help button (duplicate functionality for header button)
+    if (helpHeaderBtn && helpOverlay) {
+      helpHeaderBtn.addEventListener('click', () => {
+        helpOverlay.classList.add('active');
+      });
+      }
+      
+    // Reset modal functionality
+    if (resetAllBtn && resetModal && resetCancel && resetConfirm) {
+      resetAllBtn.addEventListener('click', () => {
+        resetModal.classList.add('active');
+      });
+
+      resetCancel.addEventListener('click', () => {
+        resetModal.classList.remove('active');
+      });
+    
+      // Close on overlay click
+      resetModal.addEventListener('click', (e) => {
+        if (e.target === resetModal) {
+          resetModal.classList.remove('active');
+      }
+      });
+    
+      // Close on Escape key
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && resetModal.classList.contains('active')) {
+          resetModal.classList.remove('active');
+      }
+      });
+
+      // Confirm reset
+      resetConfirm.addEventListener('click', () => {
+        // Clear all data
+        localStorage.removeItem('invoiceData');
+        
+        // Reset form
+        document.getElementById('invoiceForm').reset();
+        
+        // Reset items to defaults
+        invoiceItems = [...defaultInvoiceItems];
+        itemIdCounter = defaultInvoiceItems.length;
+        
+        // Reset date fields to defaults
+        document.querySelector('[name="invoiceDate"]').value = '2025-01-15';
+        document.querySelector('[name="dueDate"]').value = '2025-02-14';
+        
+        // Reset zoom and center artboard
+        currentZoom = 80;
+        centerPage();
+        updateZoomDisplay();
+        
+        // Close modal
+        resetModal.classList.remove('active');
+        
+        // Update display
+        setTimeout(() => {
+          renderInvoiceItems();
+          updatePaymentProfile('wise');
+          
+          // Trigger updates for bound elements
+          document.querySelectorAll('[data-bind]').forEach(element => {
+            const fieldName = element.dataset.bind;
+            const input = document.querySelector(`[name="${fieldName}"]`);
+            if (input) {
+              const event = new Event('input', { bubbles: true });
+              input.dispatchEvent(event);
+        }
+          });
+        }, 100);
+    });
+    }
+  });
+</script>
+</body>
+</html> 
