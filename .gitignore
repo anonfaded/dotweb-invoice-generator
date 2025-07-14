@@ -1,0 +1,55 @@
+# Node.js
+# =========================
+# Ignore the local dependency folder
+node_modules
+
+# Ignore package manager lock files (optional, but good practice for consistency in teams)
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml
+
+# Ignore logs
+npm-debug.log*
+yarn-error.log
+yarn-debug.log
+
+
+# Eleventy
+# =========================
+# Ignore the build output directory
+_site
+
+
+# Sass
+# =========================
+# Ignore the Sass cache folder
+.sass-cache/
+
+
+# Environment Variables
+# =========================
+# Ignore environment variables files, which may contain sensitive keys
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+
+# System files
+# =========================
+# Ignore macOS specific files
+.DS_Store
+
+# Ignore Windows thumbnail cache files
+Thumbs.db
+
+
+# IDE / Editor configuration
+# =========================
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln

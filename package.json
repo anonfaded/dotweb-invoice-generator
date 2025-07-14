@@ -1,0 +1,33 @@
+{
+  "name": "enterprise-invoice-generator-11ty",
+  "version": "1.0.0",
+  "description": "A high-performance, themeable invoice generator built with Eleventy, Sass, and esbuild.",
+  "scripts": {
+    "start": "npm-run-all --parallel eleventy:serve styles:watch js:watch",
+    "build": "npm-run-all styles js && eleventy",
+    "eleventy:serve": "eleventy --serve",
+    "styles": "sass src/styles/main.scss _site/css/style.css && postcss _site/css/style.css --no-map --replace",
+    "styles:watch": "sass --watch src/styles/main.scss:_site/css/style.css",
+    "js": "esbuild src/scripts/index.js --bundle --outfile=_site/js/script.js --target=es2017 --minify",
+    "js:watch": "esbuild src/scripts/index.js --bundle --outfile=_site/js/script.js --target=es2017 --watch"
+  },
+  "keywords": [
+    "eleventy",
+    "invoice",
+    "generator",
+    "jamstack",
+    "vercel"
+  ],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@11ty/eleventy": "^2.0.1",
+    "autoprefixer": "^10.4.19",
+    "cssnano": "^7.0.1",
+    "esbuild": "^0.21.4",
+    "npm-run-all": "^4.1.5",
+    "postcss": "^8.4.38",
+    "postcss-cli": "^11.0.0",
+    "sass": "^1.77.2"
+  }
+}
